@@ -1,0 +1,7 @@
+main: de.raidcraft.rcwarn.RCWarn
+name: RCWarn
+version: ${project.version}#${build.number}
+description: Warn and ban system
+author: Strasse36
+website: http://www.raid-craft.de
+depend: [RaidCraft-API]
