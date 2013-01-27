@@ -4,6 +4,7 @@ import com.sk89q.minecraft.util.commands.Command;
 import com.sk89q.minecraft.util.commands.CommandContext;
 import com.sk89q.minecraft.util.commands.CommandException;
 import com.sk89q.minecraft.util.commands.CommandPermissions;
+import de.raidcraft.api.player.RCPlayer;
 import de.raidcraft.rcwarn.RCWarn;
 import de.raidcraft.rcwarn.WarnManager;
 import de.raidcraft.rcwarn.util.Reason;
@@ -31,7 +32,11 @@ public class WarnCommands {
 
         //check player
         String player = context.getString(0);
-        //TODO implement
+        RCPlayer rcplayer = RCWarn.INST.getPlayer(player);
+        if(rcplayer == null) {
+            throw new CommandException("Der angegebene Spieler ist unbekannt! (Verschrieben?)");
+        }
+        player = rcplayer.getDisplayName();
 
         //check reason
         Reason reason = Reason.getReason(context.getString(1));
@@ -49,7 +54,8 @@ public class WarnCommands {
         }
 
         WarnManager.INST.addWarning(player, reason);
-        sender.sendMessage(ChatColor.GREEN + "Der Spieler '" + ChatColor.YELLOW + player + ChatColor.GREEN + "' wurde verwarnt!");
+        sender.sendMessage(ChatColor.GREEN + "Der Spieler '" + ChatColor.YELLOW + player + ChatColor.GREEN + "' wurde verwarnt! "
+                + ChatColor.YELLOW + "(" + ChatColor.RED + reason.getName() + ChatColor.YELLOW + ")");
     }
 }
 

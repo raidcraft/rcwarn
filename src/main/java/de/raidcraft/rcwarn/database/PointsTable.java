@@ -43,6 +43,7 @@ public class PointsTable extends Table {
                     "INSERT INTO " + getTableName() + " (player, amount, reason, detail, date) " +
                             "VALUES (" +
                             "'" + player + "'" + "," +
+                            "'" + reason.getPoints() + "'" + "," +
                             "'" + reason.getName() + "'" + "," +
                             "'" + reason.getDetail() + "'" + "," +
                             "'" + DateUtil.getCurrentDateString() + "'" +
