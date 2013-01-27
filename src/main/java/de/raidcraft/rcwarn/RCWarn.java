@@ -9,9 +9,11 @@ import de.raidcraft.api.BasePlugin;
 import de.raidcraft.api.Component;
 import de.raidcraft.api.config.ConfigurationBase;
 import de.raidcraft.api.database.Database;
-import de.raidcraft.rcwarn.commands.Commands;
+import de.raidcraft.rcwarn.commands.AdminCommands;
+import de.raidcraft.rcwarn.commands.WarnCommands;
 import de.raidcraft.rcwarn.database.BansTable;
 import de.raidcraft.rcwarn.database.PointsTable;
+import de.raidcraft.rcwarn.database.ReasonsTable;
 import de.raidcraft.rcwarn.listener.PlayerListener;
 
 /**
@@ -32,10 +34,14 @@ public class RCWarn extends BasePlugin implements Component {
         INST = this;
         this.config = configure(new LocalConfiguration(this));
 
-        registerCommands(Commands.class);
+        registerCommands(WarnCommands.class);
+        registerCommands(AdminCommands.class);
         CommandBook.registerEvents(new PlayerListener());
         new Database(RaidCraft.getComponent(RaidCraftPlugin.class)).registerTable(BansTable.class, new BansTable());
         new Database(RaidCraft.getComponent(RaidCraftPlugin.class)).registerTable(PointsTable.class, new PointsTable());
+        new Database(RaidCraft.getComponent(RaidCraftPlugin.class)).registerTable(ReasonsTable.class, new ReasonsTable());
+
+        Database.getTable(ReasonsTable.class).addAllReasons();
     }
 
     @Override

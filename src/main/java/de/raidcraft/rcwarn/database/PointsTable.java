@@ -2,6 +2,8 @@ package de.raidcraft.rcwarn.database;
 
 import com.sk89q.commandbook.CommandBook;
 import de.raidcraft.api.database.Table;
+import de.raidcraft.rcwarn.util.Reason;
+import de.raidcraft.util.DateUtil;
 
 import java.sql.SQLException;
 
@@ -32,6 +34,22 @@ public class PointsTable extends Table {
         } catch (SQLException e) {
             CommandBook.logger().severe(e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    public void addPoints(String player, Reason reason) {
+        try {
+            getConnection().prepareStatement(
+                    "INSERT INTO " + getTableName() + " (player, amount, reason, detail, date) " +
+                            "VALUES (" +
+                            "'" + player + "'" + "," +
+                            "'" + reason.getName() + "'" + "," +
+                            "'" + reason.getDetail() + "'" + "," +
+                            "'" + DateUtil.getCurrentDateString() + "'" +
+                            ");"
+            ).execute();
+        } catch (SQLException e) {
+            CommandBook.logger().warning(e.getMessage());
         }
     }
 
