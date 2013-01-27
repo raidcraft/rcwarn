@@ -14,7 +14,7 @@ public class WarnManager {
     public void addWarning(String player, Reason reason) {
 
         Database.getTable(PointsTable.class).addPoints(player, reason);
-
+        BanManager.INST.checkPlayer(player);
     }
 
 

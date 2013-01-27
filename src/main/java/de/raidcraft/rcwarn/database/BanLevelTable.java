@@ -2,19 +2,17 @@ package de.raidcraft.rcwarn.database;
 
 import com.sk89q.commandbook.CommandBook;
 import de.raidcraft.api.database.Table;
-import de.raidcraft.rcwarn.util.Reason;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
  * @author Philip
  */
-public class ReasonsTable extends Table {
+public class BanLevelTable extends Table {
 
-    public ReasonsTable() {
+    public BanLevelTable() {
 
-        super("reasons", "rcwarn_");
+        super("banlevel", "rcwarn_");
     }
 
     @Override
@@ -24,8 +22,8 @@ public class ReasonsTable extends Table {
             getConnection().prepareStatement(
                     "CREATE TABLE `" + getTableName() + "` (\n" +
                             "`id` INT NOT NULL AUTO_INCREMENT ,\n" +
-                            "`name` VARCHAR( 32 ) NOT NULL ,\n" +
                             "`points` INT( 11 ) NOT NULL ,\n" +
+                            "`duration` BIGINT( 32 ) NOT NULL ,\n" +
                             "PRIMARY KEY ( `id` )\n" +
                             ")").execute();
         } catch (SQLException e) {
@@ -33,19 +31,4 @@ public class ReasonsTable extends Table {
             e.printStackTrace();
         }
     }
-
-    public void addAllReasons() {
-        Reason.cleanReasons();
-        try {
-            ResultSet resultSet = getConnection().prepareStatement(
-                    "SELECT * FROM " + getTableName()).executeQuery();
-
-            while (resultSet.next()) {
-                new Reason(resultSet.getString("name"), resultSet.getInt("points"));
-            }
-        } catch (SQLException e) {
-            CommandBook.logger().warning(e.getMessage());
-        }
-    }
-
 }

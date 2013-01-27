@@ -5,6 +5,7 @@ import de.raidcraft.api.database.Table;
 import de.raidcraft.rcwarn.util.Reason;
 import de.raidcraft.util.DateUtil;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -54,4 +55,18 @@ public class PointsTable extends Table {
         }
     }
 
+    public int getAllPoints(String player) {
+        int points = 0;
+        try {
+            ResultSet resultSet = getConnection().prepareStatement(
+                    "SELECT * FROM " + getTableName() + " WHERE player='" + player + "'").executeQuery();
+
+            while (resultSet.next()) {
+                points += resultSet.getInt("amount");
+            }
+        } catch (SQLException e) {
+            CommandBook.logger().warning(e.getMessage());
+        }
+        return points;
+    }
 }

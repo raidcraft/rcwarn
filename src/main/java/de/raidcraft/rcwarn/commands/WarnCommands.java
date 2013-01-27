@@ -8,6 +8,7 @@ import de.raidcraft.api.player.RCPlayer;
 import de.raidcraft.rcwarn.RCWarn;
 import de.raidcraft.rcwarn.WarnManager;
 import de.raidcraft.rcwarn.util.Reason;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -53,9 +54,12 @@ public class WarnCommands {
             reason.setDetail(context.getJoinedStrings(2));
         }
 
-        WarnManager.INST.addWarning(player, reason);
         sender.sendMessage(ChatColor.GREEN + "Der Spieler '" + ChatColor.YELLOW + player + ChatColor.GREEN + "' wurde verwarnt! "
                 + ChatColor.YELLOW + "(" + ChatColor.RED + reason.getName() + ChatColor.YELLOW + ")");
+        Bukkit.broadcastMessage(ChatColor.YELLOW + player + " wurde verwarnt (" + reason.getName() + ")!");
+
+        WarnManager.INST.addWarning(player, reason);
+
     }
 }
 
