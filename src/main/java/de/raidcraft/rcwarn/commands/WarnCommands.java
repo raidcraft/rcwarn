@@ -40,7 +40,10 @@ public class WarnCommands {
         player = rcplayer.getDisplayName();
 
         //check reason
-        Reason reason = Reason.getReason(context.getString(1)).clone();
+        Reason reason = Reason.getReason(context.getString(1));
+        if(reason != null) {
+            reason = reason.clone();
+        }
         if(reason == null) {
             sender.sendMessage(ChatColor.RED + "Unbekannter Grund! Verfügbare Gründe:");
             String reasonNames = "";

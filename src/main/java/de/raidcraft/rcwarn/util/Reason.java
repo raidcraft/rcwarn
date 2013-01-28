@@ -12,9 +12,11 @@ public class Reason {
 
     public static Reason getReason(String name) {
         for(Reason reason : reasons) {
-            if(reason.getName().equalsIgnoreCase(name)) {
-                reason.setDetail("");
-                return reason;
+            for(String alias : reason.getAliases()) {
+                if(alias.equalsIgnoreCase(name)) {
+                    reason.setDetail("");
+                    return reason;
+                }
             }
         }
         return null;
@@ -32,15 +34,24 @@ public class Reason {
         reasons.clear();
     }
 
+    public static void addReason(Reason reason) {
+        reasons.add(reason);
+    }
+
     private String name;
+    private List<String> aliases = new ArrayList<>();
     private int points;
     private String detail;
 
     public Reason(String name, int points) {
 
         this.name = name;
+        addAlias(name);
         this.points = points;
-        reasons.add(this);
+    }
+
+    public void addAlias(String alias) {
+        aliases.add(alias);
     }
 
     public Reason setDetail(String detail) {
@@ -52,6 +63,11 @@ public class Reason {
     public String getName() {
 
         return name;
+    }
+
+    public List<String> getAliases() {
+
+        return aliases;
     }
 
     public int getPoints() {

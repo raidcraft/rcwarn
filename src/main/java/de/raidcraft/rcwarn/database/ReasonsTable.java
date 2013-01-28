@@ -26,6 +26,7 @@ public class ReasonsTable extends Table {
                             "`id` INT NOT NULL AUTO_INCREMENT ,\n" +
                             "`name` VARCHAR( 32 ) NOT NULL ,\n" +
                             "`points` INT( 11 ) NOT NULL ,\n" +
+                            "`aliases` VARCHAR( 500 ) NOT NULL DEFAULT ''" + " ,\n" +
                             "PRIMARY KEY ( `id` )\n" +
                             ")").execute();
         } catch (SQLException e) {
@@ -41,7 +42,14 @@ public class ReasonsTable extends Table {
                     "SELECT * FROM " + getTableName()).executeQuery();
 
             while (resultSet.next()) {
-                new Reason(resultSet.getString("name"), resultSet.getInt("points"));
+                Reason reason = new Reason(resultSet.getString("name"), resultSet.getInt("points"));
+                String[] aliases = resultSet.getString("aliases").split(",");
+                if(aliases != null) {
+                    for(String alias : aliases) {
+                        reason.addAlias(alias);
+                    }
+                }
+                Reason.addReason(reason);
             }
         } catch (SQLException e) {
             CommandBook.logger().warning(e.getMessage());
