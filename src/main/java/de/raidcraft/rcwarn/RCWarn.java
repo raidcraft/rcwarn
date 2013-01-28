@@ -45,13 +45,18 @@ public class RCWarn extends BasePlugin implements Component {
         new Database(RaidCraft.getComponent(RaidCraftPlugin.class)).registerTable(BanLevelsTable.class, new BanLevelsTable())        ;
 
 
-        Database.getTable(ReasonsTable.class).addAllReasons();
-        Database.getTable(BanLevelsTable.class).setBanLevels();
+        load();
     }
 
     @Override
     public void disable() {
 
+    }
+
+    public void load() {
+        Database.getTable(ReasonsTable.class).addAllReasons();
+        Database.getTable(BanLevelsTable.class).setBanLevels();
+        WarnManager.INST.setOpenWarnings(Database.getTable(PointsTable.class).getOpenWarnings());
     }
 
     public static class LocalConfiguration extends ConfigurationBase<RCWarn> {

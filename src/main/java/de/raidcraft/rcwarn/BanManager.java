@@ -25,6 +25,19 @@ public class BanManager {
         banLevels = newBanLevels;
     }
 
+    public BanLevel getNextBanLevel(int points) {
+        BanLevel nextBanLevel = null;
+        for(BanLevel banLevel : banLevels) {
+            if(banLevel.getPoints() > points) {
+                continue;
+            }
+            if(nextBanLevel == null || nextBanLevel.getPoints() > banLevel.getPoints()) {
+                nextBanLevel = banLevel;
+            }
+        }
+        return nextBanLevel;
+    }
+
     public void checkPlayer(String player) {
 
         BanLevel nextBan = null;

@@ -43,9 +43,10 @@ public class Reason {
         reasons.add(this);
     }
 
-    public void setDetail(String detail) {
+    public Reason setDetail(String detail) {
 
         this.detail = detail;
+        return this;
     }
 
     public String getName() {
@@ -61,5 +62,11 @@ public class Reason {
     public String getDetail() {
 
         return detail;
+    }
+
+    public Reason clone() {
+        Reason newReason = new Reason(name, points);
+        newReason.setDetail(detail);
+        return newReason;
     }
 }
