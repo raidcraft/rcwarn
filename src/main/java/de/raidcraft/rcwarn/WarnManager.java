@@ -4,6 +4,7 @@ import de.raidcraft.api.database.Database;
 import de.raidcraft.rcwarn.database.PointsTable;
 import de.raidcraft.rcwarn.util.Reason;
 import de.raidcraft.rcwarn.util.Warning;
+import de.raidcraft.util.DateUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,8 +21,9 @@ public class WarnManager {
 
     public void addWarning(String player, String punisher, Reason reason) {
 
-        Database.getTable(PointsTable.class).addPoints(player, punisher, reason);
-        openWarnings.put(player, new Warning(player, punisher, reason));
+        Warning warning = new Warning(player, punisher, reason, DateUtil.getCurrentDateString());
+        Database.getTable(PointsTable.class).addPoints(warning);
+        openWarnings.put(player, warning);
         BanManager.INST.checkPlayer(player);
     }
 

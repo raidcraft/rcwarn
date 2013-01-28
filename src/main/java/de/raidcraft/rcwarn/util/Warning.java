@@ -8,12 +8,14 @@ public class Warning {
     String player;
     String punisher;
     Reason reason;
+    String date;
 
-    public Warning(String player, String punisher, Reason reason) {
+    public Warning(String player, String punisher, Reason reason, String date) {
 
         this.player = player;
         this.punisher = punisher;
         this.reason = reason;
+        this.date = date;
     }
 
     public String getPlayer() {
@@ -29,5 +31,10 @@ public class Warning {
     public Reason getReason() {
 
         return reason;
+    }
+
+    public String getDate() {
+
+        return date;
     }
 }

@@ -35,6 +35,7 @@ public class PointsTable extends Table {
                             "`detail` VARCHAR( 200 ) NOT NULL ,\n" +
                             "`date` VARCHAR( 64 ) NOT NULL ,\n" +
                             "`accepted` TINYINT( 1 ) NOT NULL DEFAULT '0',\n" +
+                            "`expired` TINYINT( 1 ) NOT NULL DEFAULT '0',\n" +
                             "PRIMARY KEY ( `id` )\n" +
                             ")").execute();
         } catch (SQLException e) {
@@ -43,17 +44,17 @@ public class PointsTable extends Table {
         }
     }
 
-    public void addPoints(String player, String punisher, Reason reason) {
+    public void addPoints(Warning warning) {
         try {
             getConnection().prepareStatement(
                     "INSERT INTO " + getTableName() + " (player, punisher, amount, reason, detail, date) " +
                             "VALUES (" +
-                            "'" + player + "'" + "," +
-                            "'" + punisher + "'" + "," +
-                            "'" + reason.getPoints() + "'" + "," +
-                            "'" + reason.getName() + "'" + "," +
-                            "'" + reason.getDetail() + "'" + "," +
-                            "'" + DateUtil.getCurrentDateString() + "'" +
+                            "'" + warning.getPlayer() + "'" + "," +
+                            "'" + warning.getPunisher() + "'" + "," +
+                            "'" + warning.getReason().getPoints() + "'" + "," +
+                            "'" + warning.getReason().getName() + "'" + "," +
+                            "'" + warning.getReason().getDetail() + "'" + "," +
+                            "'" + warning.getDate() + "'" +
                             ");"
             ).execute();
         } catch (SQLException e) {
@@ -65,7 +66,7 @@ public class PointsTable extends Table {
         int points = 0;
         try {
             ResultSet resultSet = getConnection().prepareStatement(
-                    "SELECT * FROM " + getTableName() + " WHERE player='" + player + "'").executeQuery();
+                    "SELECT * FROM " + getTableName() + " WHERE player='" + player + "' AND expired='0'").executeQuery();
 
             while (resultSet.next()) {
                 points += resultSet.getInt("amount");
@@ -73,13 +74,54 @@ public class PointsTable extends Table {
         } catch (SQLException e) {
             CommandBook.logger().warning(e.getMessage());
         }
+
         return points;
+    }
+
+    public List<Warning> getAllWarnings(String player) {
+        List<Warning> warnings = new ArrayList<>();
+        Warning warning;
+        try {
+            ResultSet resultSet = getConnection().prepareStatement(
+                    "SELECT * FROM " + getTableName() + " WHERE player = '" + player + "'").executeQuery();
+
+            while (resultSet.next()) {
+                warning = new Warning(
+                        resultSet.getString("player"),
+                        resultSet.getString("punisher"),
+                        Reason.getReason(resultSet.getString("reason")).clone().setDetail(resultSet.getString("detail")),
+                        resultSet.getString("date"));
+                warnings.add(warning);
+            }
+        } catch (SQLException e) {
+            CommandBook.logger().warning(e.getMessage());
+        }
+        return warnings;
+    }
+
+    public void checkPointsExpiration(String player) {
+        List<Warning> warnings = getAllWarnings(player);
+        for(Warning warning : warnings) {
+            // warning expired
+            if(DateUtil.getTimeStamp(warning.getDate()) + warning.getReason().getDuration()*60*1000 < System.currentTimeMillis()) {
+                setExpired(warning);
+            }
+        }
     }
 
     public void setAccepted(String player) {
         try {
             getConnection().prepareStatement(
                     "UPDATE " + getTableName() + " SET accepted = '1' WHERE player = '" + player + "'").execute();
+        } catch (SQLException e) {
+            CommandBook.logger().warning(e.getMessage());
+        }
+    }
+
+    public void setExpired(Warning warning) {
+        try {
+            getConnection().prepareStatement(
+                    "UPDATE " + getTableName() + " SET expired = '1' WHERE player = '" + warning.getPlayer() + "' AND date = '" +  warning.getDate() + "'").execute();
         } catch (SQLException e) {
             CommandBook.logger().warning(e.getMessage());
         }
@@ -96,7 +138,8 @@ public class PointsTable extends Table {
                 warning = new Warning(
                         resultSet.getString("player"),
                         resultSet.getString("punisher"),
-                        Reason.getReason(resultSet.getString("reason")).clone().setDetail(resultSet.getString("detail")));
+                        Reason.getReason(resultSet.getString("reason")).clone().setDetail(resultSet.getString("detail")),
+                        resultSet.getString("date"));
                 warnings.add(warning);
             }
         } catch (SQLException e) {

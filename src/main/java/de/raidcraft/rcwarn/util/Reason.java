@@ -42,12 +42,14 @@ public class Reason {
     private List<String> aliases = new ArrayList<>();
     private int points;
     private String detail;
+    private long duration;
 
-    public Reason(String name, int points) {
+    public Reason(String name, int points, long duration) {
 
         this.name = name;
         addAlias(name);
         this.points = points;
+        this.duration = duration;
     }
 
     public void addAlias(String alias) {
@@ -80,8 +82,13 @@ public class Reason {
         return detail;
     }
 
+    public long getDuration() {
+
+        return duration;
+    }
+
     public Reason clone() {
-        Reason newReason = new Reason(name, points);
+        Reason newReason = new Reason(name, points, duration);
         newReason.setDetail(detail);
         return newReason;
     }
