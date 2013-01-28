@@ -26,6 +26,7 @@ public class PointsTable extends Table {
                     "CREATE TABLE `" + getTableName() + "` (\n" +
                             "`id` INT NOT NULL AUTO_INCREMENT ,\n" +
                             "`player` VARCHAR( 32 ) NOT NULL ,\n" +
+                            "`punisher` VARCHAR( 32 ) NOT NULL ,\n" +
                             "`amount` INT( 11 ) NOT NULL ,\n" +
                             "`reason` VARCHAR( 64 ) NOT NULL ,\n" +
                             "`detail` VARCHAR( 200 ) NOT NULL ,\n" +
@@ -38,12 +39,13 @@ public class PointsTable extends Table {
         }
     }
 
-    public void addPoints(String player, Reason reason) {
+    public void addPoints(String player, String punisher, Reason reason) {
         try {
             getConnection().prepareStatement(
-                    "INSERT INTO " + getTableName() + " (player, amount, reason, detail, date) " +
+                    "INSERT INTO " + getTableName() + " (player, punisher, amount, reason, detail, date) " +
                             "VALUES (" +
                             "'" + player + "'" + "," +
+                            "'" + punisher + "'" + "," +
                             "'" + reason.getPoints() + "'" + "," +
                             "'" + reason.getName() + "'" + "," +
                             "'" + reason.getDetail() + "'" + "," +

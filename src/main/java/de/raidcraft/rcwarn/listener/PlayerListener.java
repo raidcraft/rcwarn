@@ -22,7 +22,7 @@ public class PlayerListener implements Listener {
             BanManager.INST.checkPlayer(event.getPlayer().getName());
             return;
         }
-        BanManager.INST.kickBannedPlayer(event.getPlayer().getName());
+        BanManager.INST.kickBannedPlayer(event.getPlayer().getName(), ban);
     }
 
     @EventHandler

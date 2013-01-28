@@ -2,15 +2,20 @@ package de.raidcraft.rcwarn.database;
 
 import com.sk89q.commandbook.CommandBook;
 import de.raidcraft.api.database.Table;
+import de.raidcraft.rcwarn.BanManager;
+import de.raidcraft.rcwarn.util.BanLevel;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Philip
  */
-public class BanLevelTable extends Table {
+public class BanLevelsTable extends Table {
 
-    public BanLevelTable() {
+    public BanLevelsTable() {
 
         super("banlevel", "rcwarn_");
     }
@@ -29,6 +34,22 @@ public class BanLevelTable extends Table {
         } catch (SQLException e) {
             CommandBook.logger().severe(e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    public void setBanLevels() {
+
+        List<BanLevel> banLevels = new ArrayList<>();
+        try {
+            ResultSet resultSet = getConnection().prepareStatement(
+                    "SELECT * FROM " + getTableName()).executeQuery();
+
+            while (resultSet.next()) {
+                banLevels.add(new BanLevel(resultSet.getInt("points"), resultSet.getLong("duration")));
+            }
+            BanManager.INST.setBanLevels(banLevels);
+        } catch (SQLException e) {
+            CommandBook.logger().warning(e.getMessage());
         }
     }
 }

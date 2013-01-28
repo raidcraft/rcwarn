@@ -11,9 +11,9 @@ public class WarnManager {
 
     public static final WarnManager INST = new WarnManager();
 
-    public void addWarning(String player, Reason reason) {
+    public void addWarning(String player, String punisher, Reason reason) {
 
-        Database.getTable(PointsTable.class).addPoints(player, reason);
+        Database.getTable(PointsTable.class).addPoints(player, punisher, reason);
         BanManager.INST.checkPlayer(player);
     }
 

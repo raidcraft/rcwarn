@@ -7,8 +7,8 @@ import de.raidcraft.rcwarn.util.Ban;
 import de.raidcraft.rcwarn.util.BanLevel;
 import de.raidcraft.util.DateUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,7 +18,12 @@ public class BanManager {
 
     public static final BanManager INST = new BanManager();
 
-    private List<BanLevel> banLevels = new ArrayList<>();
+    private List<BanLevel> banLevels;
+
+    public void setBanLevels(List<BanLevel> newBanLevels) {
+        banLevels.clear();
+        banLevels = newBanLevels;
+    }
 
     public void checkPlayer(String player) {
 
@@ -43,17 +48,19 @@ public class BanManager {
         }
 
         // ban player
-        Ban newBan = new Ban(player, playerPoints, DateUtil.getCurrentDateString(), nextBan.getExpirationFromNow());
+        String expiration = nextBan.getExpirationFromNow();
+        Ban newBan = new Ban(player, playerPoints, DateUtil.getCurrentDateString(), expiration);
         Database.getTable(BansTable.class).addBan(newBan);
-        kickBannedPlayer(player);
+        kickBannedPlayer(player, newBan);
 
-        //TODO broadcast
+        Bukkit.broadcastMessage(ChatColor.DARK_RED + player + " wurde gebannt (" + newBan.getEmbellishedExpiration() + ")");
     }
 
-    public void kickBannedPlayer(String player) {
+    public void kickBannedPlayer(String player, Ban ban) {
         if(Bukkit.getPlayer(player) != null) {
-            //TODO show temp duration
-            Bukkit.getPlayer(player).kickPlayer(RCWarn.INST.config.banText);
+            String expiration = ban.getExpiration();
+            String info = RCWarn.INST.config.banText.replace("%e", ban.getEmbellishedExpiration());
+            Bukkit.getPlayer(player).kickPlayer(info);
         }
     }
 

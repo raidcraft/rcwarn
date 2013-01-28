@@ -40,6 +40,15 @@ public class Ban {
         return expiration;
     }
 
+    public String getEmbellishedExpiration() {
+        if(getExpiration() == null) {
+            return "permanent";
+        }
+        else {
+            return "bis " + getExpiration();
+        }
+    }
+
     public boolean isExpired() {
         if(getExpiration() != null && DateUtil.getTimeStamp(getExpiration()) < System.currentTimeMillis()) {
             return true;

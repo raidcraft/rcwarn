@@ -12,7 +12,7 @@ import de.raidcraft.api.config.Setting;
 import de.raidcraft.api.database.Database;
 import de.raidcraft.rcwarn.commands.AdminCommands;
 import de.raidcraft.rcwarn.commands.WarnCommands;
-import de.raidcraft.rcwarn.database.BanLevelTable;
+import de.raidcraft.rcwarn.database.BanLevelsTable;
 import de.raidcraft.rcwarn.database.BansTable;
 import de.raidcraft.rcwarn.database.PointsTable;
 import de.raidcraft.rcwarn.database.ReasonsTable;
@@ -42,11 +42,11 @@ public class RCWarn extends BasePlugin implements Component {
         new Database(RaidCraft.getComponent(RaidCraftPlugin.class)).registerTable(BansTable.class, new BansTable());
         new Database(RaidCraft.getComponent(RaidCraftPlugin.class)).registerTable(PointsTable.class, new PointsTable());
         new Database(RaidCraft.getComponent(RaidCraftPlugin.class)).registerTable(ReasonsTable.class, new ReasonsTable())        ;
-        new Database(RaidCraft.getComponent(RaidCraftPlugin.class)).registerTable(BanLevelTable.class, new BanLevelTable())        ;
+        new Database(RaidCraft.getComponent(RaidCraftPlugin.class)).registerTable(BanLevelsTable.class, new BanLevelsTable())        ;
 
 
         Database.getTable(ReasonsTable.class).addAllReasons();
-        //TODO load ban levels
+        Database.getTable(BanLevelsTable.class).setBanLevels();
     }
 
     @Override
@@ -56,7 +56,7 @@ public class RCWarn extends BasePlugin implements Component {
 
     public static class LocalConfiguration extends ConfigurationBase<RCWarn> {
 
-        @Setting("ban-text") public String banText = "Du wurdest gebannt! Erfahre im Forum unter 'forum.raid-craft.de' weshalb!";
+        @Setting("ban-text") public String banText = "Du wurdest %e gebannt! Schaue im Forum nach weshalb (forum.raid-craft.de)!";
 
         public LocalConfiguration(RCWarn plugin) {
 
