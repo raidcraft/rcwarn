@@ -45,12 +45,14 @@ public class PlayerListener implements Listener {
         BanManager.INST.kickBannedPlayer(event, ban);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onInteract(PlayerInteractEvent event) {
         Warning warning = WarnManager.INST.getOpenWarning(event.getPlayer().getName());
         if(warning == null) {
             return;
         }
+
+        event.setCancelled(true);
 
         Player player = event.getPlayer();
         int points = Database.getTable(PointsTable.class).getAllPoints(player.getName());

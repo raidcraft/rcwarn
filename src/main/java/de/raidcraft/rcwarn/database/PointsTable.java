@@ -64,6 +64,7 @@ public class PointsTable extends Table {
 
     public int getAllPoints(String player) {
         int points = 0;
+        checkPointsExpiration(player);
         try {
             ResultSet resultSet = getConnection().prepareStatement(
                     "SELECT * FROM " + getTableName() + " WHERE player='" + player + "' AND expired='0'").executeQuery();
