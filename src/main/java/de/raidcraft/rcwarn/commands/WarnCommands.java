@@ -54,7 +54,7 @@ public class WarnCommands {
             reason.setDetail(context.getJoinedStrings(2));
         }
 
-        sender.sendMessage(ChatColor.GREEN + "Der Spieler '" + ChatColor.YELLOW + player + ChatColor.GREEN + "' wurde verwarnt! "
+        sender.sendMessage(ChatColor.GREEN + "Du hast '" + ChatColor.YELLOW + player + ChatColor.GREEN + "' wurde verwarnt! "
                 + ChatColor.YELLOW + "(" + ChatColor.RED + reason.getName() + ChatColor.YELLOW + ")");
         Bukkit.broadcastMessage(ChatColor.DARK_RED + player + " wurde verwarnt (" + reason.getName() + ")!");
 

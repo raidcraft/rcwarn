@@ -35,4 +35,8 @@ public class WarnManager {
     public Warning getOpenWarning(String player) {
         return openWarnings.get(player);
     }
+
+    public void removeOpenWarning(String player) {
+        openWarnings.remove(player);
+    }
 }

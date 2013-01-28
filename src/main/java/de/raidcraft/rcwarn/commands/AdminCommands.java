@@ -2,6 +2,7 @@ package de.raidcraft.rcwarn.commands;
 
 import com.sk89q.minecraft.util.commands.*;
 import de.raidcraft.rcwarn.RCWarn;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 /**
@@ -40,6 +41,7 @@ public class AdminCommands {
 
             RCWarn.INST.reload();
             RCWarn.INST.load();
+            sender.sendMessage(ChatColor.GREEN + "RCWarn wurde neu geladen!");
         }
     }
 }

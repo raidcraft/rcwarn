@@ -8,9 +8,11 @@ import de.raidcraft.rcwarn.database.BansTable;
 import de.raidcraft.rcwarn.database.PointsTable;
 import de.raidcraft.rcwarn.util.Ban;
 import de.raidcraft.rcwarn.util.Warning;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -20,7 +22,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
  */
 public class PlayerListener implements Listener {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onLogin(PlayerJoinEvent event) {
         Ban ban = Database.getTable(BansTable.class).getBan(event.getPlayer().getName());
         // no or old ban
@@ -39,21 +41,28 @@ public class PlayerListener implements Listener {
         }
 
         Player player = event.getPlayer();
+        int points = Database.getTable(PointsTable.class).getAllPoints(player.getName());
+        player.sendMessage(ChatColor.YELLOW + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        player.sendMessage(ChatColor.RED.toString() + ChatColor.ITALIC + "Du wurdest verwarnt!");
+        player.sendMessage(ChatColor.YELLOW + "Grund: " + ChatColor.RED + warning.getReason().getName() + " (" + warning.getReason().getDetail() + ")");
+        player.sendMessage(ChatColor.YELLOW + "Punkte: " + ChatColor.RED + warning.getReason().getPoints() +
+                " (Nächster Ban: " + points + "/" + BanManager.INST.getNextBanLevel(warning.getReason().getPoints()).getPoints() + ")");
+        player.sendMessage(ChatColor.RED + "Gebe " + ChatColor.WHITE + "/rcconfirm" + ChatColor.RED + " ein um die Warnung zur Kenntnis zu nehmen!");
+        player.sendMessage(ChatColor.YELLOW + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
-        player.sendMessage("~~~~~~~~~~~~~~~~~~~~~~~~");
-        player.sendMessage(ChatColor.RED + "Du wurdest verwarnt!");
-        player.sendMessage(ChatColor.RED + "Grund: " + warning.getReason().getName() + " (" + warning.getReason().getDetail() + ")");
-        player.sendMessage(ChatColor.RED + "Punkte: " + warning.getReason().getPoints() +
-                "(Nächste Ban-Stufe: " + BanManager.INST.getNextBanLevel(warning.getReason().getPoints()) + ")");
-        player.sendMessage(ChatColor.RED + "Gebe /rcaccept ein um die Warnung zur Kentniss zu nehmen!");
-        player.sendMessage("~~~~~~~~~~~~~~~~~~~~~~~~");
-
-        QueuedCommand queuedCommand = new QueuedCommand(event.getPlayer(), this, "warningAccept", player);
+        try {
+            new QueuedCommand(event.getPlayer(), this, "warningAccept", player.getName());
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void warningAccept(Player player) {
-        Database.getTable(PointsTable.class).setAccepted(player.getName());
-        player.sendMessage(ChatColor.YELLOW + "Warnung akzeptiert! Du kannst nun weiter spielen!");
+    public void warningAccept(String player) {
+        Database.getTable(PointsTable.class).setAccepted(player);
+        WarnManager.INST.removeOpenWarning(player);
+        if(Bukkit.getPlayer(player) != null) {
+            Bukkit.getPlayer(player).sendMessage(ChatColor.YELLOW + "Warnung akzeptiert! Du kannst nun weiter spielen!");
+        }
     }
 
 }

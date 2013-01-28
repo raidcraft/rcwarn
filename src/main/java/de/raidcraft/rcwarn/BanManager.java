@@ -21,14 +21,13 @@ public class BanManager {
     private List<BanLevel> banLevels;
 
     public void setBanLevels(List<BanLevel> newBanLevels) {
-        banLevels.clear();
         banLevels = newBanLevels;
     }
 
     public BanLevel getNextBanLevel(int points) {
         BanLevel nextBanLevel = null;
         for(BanLevel banLevel : banLevels) {
-            if(banLevel.getPoints() > points) {
+            if(banLevel.getPoints() < points) {
                 continue;
             }
             if(nextBanLevel == null || nextBanLevel.getPoints() > banLevel.getPoints()) {
