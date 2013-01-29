@@ -38,6 +38,16 @@ public class BanManager {
         return nextBanLevel;
     }
 
+    public BanLevel getHighestBanLevel() {
+        BanLevel nextBanLevel = null;
+        for(BanLevel banLevel : banLevels) {
+            if(nextBanLevel == null || nextBanLevel.getPoints() < banLevel.getPoints()) {
+                nextBanLevel = banLevel;
+            }
+        }
+        return nextBanLevel;
+    }
+
     public void checkPlayer(String player) {
 
         BanLevel nextBan = null;
@@ -67,7 +77,7 @@ public class BanManager {
         Database.getTable(BansTable.class).addBan(newBan);
         kickBannedPlayer(player, newBan);
 
-        Bukkit.broadcastMessage(ChatColor.DARK_RED + player + " wurde gebannt (" + newBan.getEmbellishedExpiration() + ")");
+        Bukkit.broadcastMessage(ChatColor.DARK_RED + player + " wurde gebannt (" + newBan.getEmbellishedExpiration() + ")!");
     }
 
     public void kickBannedPlayer(String player, Ban ban) {

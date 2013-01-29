@@ -106,10 +106,46 @@ public class PointsTable extends Table {
         return warnings;
     }
 
+    public List<Warning> getOpenWarnings() {
+        List<Warning> warnings = new ArrayList<>();
+        Warning warning;
+        try {
+            ResultSet resultSet = getConnection().prepareStatement(
+                    "SELECT * FROM " + getTableName() + " WHERE accepted='0'").executeQuery();
+
+            while (resultSet.next()) {
+                warning = getWarningByResultSet(resultSet);
+                warnings.add(warning);
+            }
+        } catch (SQLException e) {
+            CommandBook.logger().warning(e.getMessage());
+        }
+        return warnings;
+    }
+
+    public Warning getLastWarning(String player) {
+        Warning warning;
+        try {
+            ResultSet resultSet = getConnection().prepareStatement(
+                    "SELECT * FROM " + getTableName() + " WHERE player = '" + player + "' ORDER BY id DESC").executeQuery();
+
+            while (resultSet.next()) {
+                return getWarningByResultSet(resultSet);
+            }
+        } catch (SQLException e) {
+            CommandBook.logger().warning(e.getMessage());
+        }
+        return null;
+    }
+
     public void checkPointsExpiration(String player) {
         List<Warning> warnings = getAllWarnings(player);
         for(Warning warning : warnings) {
             // warning expired
+            if(warning.getReason().getDuration() <= 0) {
+                continue;
+            }
+
             if(DateUtil.getTimeStamp(warning.getDate()) + warning.getReason().getDuration()*60*1000 < System.currentTimeMillis()) {
                 setExpired(warning);
             }
@@ -132,23 +168,6 @@ public class PointsTable extends Table {
         } catch (SQLException e) {
             CommandBook.logger().warning(e.getMessage());
         }
-    }
-
-    public List<Warning> getOpenWarnings() {
-        List<Warning> warnings = new ArrayList<>();
-        Warning warning;
-        try {
-            ResultSet resultSet = getConnection().prepareStatement(
-                    "SELECT * FROM " + getTableName() + " WHERE accepted='0'").executeQuery();
-
-            while (resultSet.next()) {
-                warning = getWarningByResultSet(resultSet);
-                warnings.add(warning);
-            }
-        } catch (SQLException e) {
-            CommandBook.logger().warning(e.getMessage());
-        }
-        return warnings;
     }
 
     private Warning getWarningByResultSet(ResultSet resultSet) throws SQLException {

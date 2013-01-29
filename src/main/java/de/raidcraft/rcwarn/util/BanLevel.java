@@ -28,7 +28,7 @@ public class BanLevel {
 
     public String getExpirationFromNow() {
         if(getDuration() <= 0) {
-            return null;
+            return "";
         }
 
         return DateUtil.getDateString(System.currentTimeMillis() + getDuration()*60*1000);

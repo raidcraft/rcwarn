@@ -8,22 +8,30 @@ import de.raidcraft.api.player.RCPlayer;
 import de.raidcraft.rcwarn.RCWarn;
 import de.raidcraft.rcwarn.WarnManager;
 import de.raidcraft.rcwarn.util.Reason;
+import de.raidcraft.rcwarn.util.Warning;
+import de.raidcraft.util.DateUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Philip
  */
 public class WarnCommands {
 
+    private Map<String, Warning> lastWarnings = new HashMap<>();
+
     public WarnCommands(RCWarn module) {
     }
 
     @Command(
             aliases = {"warn", "ban"},
-            desc = "Warn command"
+            desc = "Warn command",
+            flags = "f"
     )
     @CommandPermissions("rcwarn.warn")
     public void rcwarn(CommandContext context, CommandSender sender) throws CommandException {
@@ -39,6 +47,24 @@ public class WarnCommands {
             throw new CommandException("Der angegebene Spieler ist unbekannt! (Verschrieben?)");
         }
         player = rcplayer.getDisplayName();
+
+        if(rcplayer.hasPermission("rcwarn.ignore")) {
+            throw new CommandException("Dieser Spieler kann nicht verwarnt werden! (Mod / Admin?)");
+        }
+
+        if(!context.hasFlag('f')) {
+            Warning lastWarning = lastWarnings.get(player);
+
+            if(lastWarning != null && DateUtil.getTimeStamp(lastWarning.getDate()) + RCWarn.INST.config.warningCooldown > System.currentTimeMillis()) {
+                sender.sendMessage(ChatColor.RED + "Der Spieler hat in den letzen Minuten erst eine Verwarnung erhalten:");
+                sender.sendMessage(ChatColor.RED + "Grund: " + lastWarning.getReason().getName() + " (" + lastWarning.getReason().getDetail() + ")");
+                sender.sendMessage(ChatColor.RED + "Nutze '/warn <Spieler> <Grund> [Detail] -f' um den Spieler trotzdem zu warnen!");
+                return;
+            }
+            else if (lastWarning != null) {
+                lastWarnings.remove(player);
+            }
+        }
 
         //check reason
         Reason reason = Reason.getReason(context.getString(1));
@@ -58,12 +84,11 @@ public class WarnCommands {
             reason.setDetail(context.getJoinedStrings(2));
         }
 
-        sender.sendMessage(ChatColor.GREEN + "Du hast '" + ChatColor.YELLOW + player + ChatColor.GREEN + "' wurde verwarnt! "
+        sender.sendMessage(ChatColor.GREEN + "Du hast '" + ChatColor.YELLOW + player + ChatColor.GREEN + "' verwarnt! "
                 + ChatColor.YELLOW + "(" + ChatColor.RED + reason.getName() + ChatColor.YELLOW + ")");
         Bukkit.broadcastMessage(ChatColor.DARK_RED + player + " wurde verwarnt (" + reason.getName() + ")!");
 
-        WarnManager.INST.addWarning(player, (Player)sender, reason);
-
+        lastWarnings.put(player, WarnManager.INST.addWarning(player, (Player) sender, reason));
     }
 }
 

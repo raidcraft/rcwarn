@@ -11,6 +11,7 @@ import de.raidcraft.api.config.ConfigurationBase;
 import de.raidcraft.api.config.Setting;
 import de.raidcraft.api.database.Database;
 import de.raidcraft.rcwarn.commands.AdminCommands;
+import de.raidcraft.rcwarn.commands.UnbanCommand;
 import de.raidcraft.rcwarn.commands.WarnCommands;
 import de.raidcraft.rcwarn.database.BanLevelsTable;
 import de.raidcraft.rcwarn.database.BansTable;
@@ -38,6 +39,8 @@ public class RCWarn extends BasePlugin implements Component {
 
         registerCommands(WarnCommands.class);
         registerCommands(AdminCommands.class);
+        registerCommands(UnbanCommand.class);
+
         CommandBook.registerEvents(new PlayerListener());
         new Database(RaidCraft.getComponent(RaidCraftPlugin.class)).registerTable(BansTable.class, new BansTable());
         new Database(RaidCraft.getComponent(RaidCraftPlugin.class)).registerTable(PointsTable.class, new PointsTable());
@@ -62,6 +65,7 @@ public class RCWarn extends BasePlugin implements Component {
     public static class LocalConfiguration extends ConfigurationBase<RCWarn> {
 
         @Setting("ban-text") public String banText = "Du wurdest %e gebannt! Schaue im Forum nach weshalb! (forum.raid-craft.de)";
+        @Setting("warning-cooldown") public int warningCooldown = 180;
 
         public LocalConfiguration(RCWarn plugin) {
 

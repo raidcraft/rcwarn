@@ -16,23 +16,11 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 
 /**
  * @author Philip
  */
 public class PlayerListener implements Listener {
-
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onLogin(PlayerJoinEvent event) {
-        Ban ban = Database.getTable(BansTable.class).getBan(event.getPlayer().getName());
-        // no or old ban
-        if(ban == null || ban.isExpired()) {
-            BanManager.INST.checkPlayer(event.getPlayer().getName());
-            return;
-        }
-        BanManager.INST.kickBannedPlayer(event.getPlayer().getName(), ban);
-    }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onAsynchPreLogin(AsyncPlayerPreLoginEvent event) {

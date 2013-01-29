@@ -20,12 +20,13 @@ public class WarnManager {
 
     private Map<String, Warning> openWarnings = new HashMap<>();
 
-    public void addWarning(String player, Player punisher, Reason reason) {
+    public Warning addWarning(String player, Player punisher, Reason reason) {
 
         Warning warning = new Warning(player, punisher.getName(), reason, DateUtil.getCurrentDateString(), punisher.getLocation());
         Database.getTable(PointsTable.class).addPoints(warning);
         openWarnings.put(player, warning);
         BanManager.INST.checkPlayer(player);
+        return warning;
     }
 
     public void setOpenWarnings(List<Warning> warnings) {

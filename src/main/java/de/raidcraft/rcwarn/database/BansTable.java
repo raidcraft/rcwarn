@@ -28,6 +28,7 @@ public class BansTable extends Table {
                             "`points` INT( 11 ) NOT NULL ,\n" +
                             "`date` VARCHAR( 64 ) NOT NULL ,\n" +
                             "`expiration` VARCHAR( 64 ) DEFAULT NULL ,\n" +
+                            "`unbanned` TINYINT( 1 ) DEFAULT '0' , \n" +
                             "PRIMARY KEY ( `id` )\n" +
                             ")").execute();
         } catch (SQLException e) {
@@ -55,10 +56,10 @@ public class BansTable extends Table {
     public Ban getBan(String player) {
         try {
             ResultSet resultSet = getConnection().prepareStatement(
-                    "SELECT * FROM " + getTableName() + " WHERE player='" + player + "' ORDER by id DESC").executeQuery();
+                    "SELECT * FROM " + getTableName() + " WHERE player='" + player + "' ORDER BY id DESC").executeQuery();
 
             while (resultSet.next()) {
-                return new Ban(resultSet.getString("player"), resultSet.getInt("points"), resultSet.getString("date"), resultSet.getString("expiration"));
+                return new Ban(resultSet.getString("player"), resultSet.getInt("points"), resultSet.getString("date"), resultSet.getString("expiration"), resultSet.getBoolean("unbanned"));
             }
         } catch (SQLException e) {
             CommandBook.logger().warning(e.getMessage());
@@ -66,4 +67,12 @@ public class BansTable extends Table {
         return null;
     }
 
+    public void unban(String player) {
+        try {
+            getConnection().prepareStatement(
+                    "UPDATE " + getTableName() + " SET unbanned = '1' WHERE player = '" + player + "' ORDER BY ID DESC LIMIT 1").execute();
+        } catch (SQLException e) {
+            CommandBook.logger().warning(e.getMessage());
+        }
+    }
 }

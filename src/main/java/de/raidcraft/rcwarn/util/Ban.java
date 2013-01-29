@@ -11,6 +11,7 @@ public class Ban {
     private int points;
     private String date;
     private String expiration;
+    private boolean unbanned = false;
 
     public Ban(String player, int points, String date, String expiration) {
 
@@ -18,6 +19,12 @@ public class Ban {
         this.points = points;
         this.date = date;
         this.expiration = expiration;
+    }
+
+    public Ban(String player, int points, String date, String expiration, boolean unbanned) {
+
+        this(player, points, date, expiration);
+        this.unbanned = unbanned;
     }
 
     public String getPlayer() {
@@ -41,7 +48,7 @@ public class Ban {
     }
 
     public String getEmbellishedExpiration() {
-        if(getExpiration() == null) {
+        if(!isTemporary()) {
             return "permanent";
         }
         else {
@@ -50,9 +57,18 @@ public class Ban {
     }
 
     public boolean isExpired() {
-        if(getExpiration() != null && DateUtil.getTimeStamp(getExpiration()) < System.currentTimeMillis()) {
+        if(unbanned) return true;
+        if(!isTemporary()) return false;
+        if(DateUtil.getTimeStamp(getExpiration()) < System.currentTimeMillis()) {
             return true;
         }
         return false;
+    }
+
+    public boolean isTemporary() {
+        if(getExpiration() == null || getExpiration() == "" || getExpiration() == "null") {
+            return false;
+        }
+        return true;
     }
 }
