@@ -1,5 +1,7 @@
 package de.raidcraft.rcwarn.util;
 
+import org.bukkit.Location;
+
 /**
  * @author Philip
  */
@@ -9,13 +11,15 @@ public class Warning {
     String punisher;
     Reason reason;
     String date;
+    Location location;
 
-    public Warning(String player, String punisher, Reason reason, String date) {
+    public Warning(String player, String punisher, Reason reason, String date, Location location) {
 
         this.player = player;
         this.punisher = punisher;
         this.reason = reason;
         this.date = date;
+        this.location = location;
     }
 
     public String getPlayer() {
@@ -36,5 +40,10 @@ public class Warning {
     public String getDate() {
 
         return date;
+    }
+
+    public Location getLocation() {
+
+        return location;
     }
 }

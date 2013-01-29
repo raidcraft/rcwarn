@@ -11,6 +11,7 @@ import de.raidcraft.rcwarn.util.Reason;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 /**
  * @author Philip
@@ -61,7 +62,7 @@ public class WarnCommands {
                 + ChatColor.YELLOW + "(" + ChatColor.RED + reason.getName() + ChatColor.YELLOW + ")");
         Bukkit.broadcastMessage(ChatColor.DARK_RED + player + " wurde verwarnt (" + reason.getName() + ")!");
 
-        WarnManager.INST.addWarning(player, sender.getName(), reason);
+        WarnManager.INST.addWarning(player, (Player)sender, reason);
 
     }
 }

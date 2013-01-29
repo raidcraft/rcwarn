@@ -5,6 +5,8 @@ import de.raidcraft.api.database.Table;
 import de.raidcraft.rcwarn.util.Reason;
 import de.raidcraft.rcwarn.util.Warning;
 import de.raidcraft.util.DateUtil;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -34,6 +36,10 @@ public class PointsTable extends Table {
                             "`reason` VARCHAR( 64 ) NOT NULL ,\n" +
                             "`detail` VARCHAR( 200 ) NOT NULL ,\n" +
                             "`date` VARCHAR( 64 ) NOT NULL ,\n" +
+                            "`world` VARCHAR ( 32 ) NOT NULL ,\n" +
+                            "`x` INT( 11 ) NOT NULL ,\n" +
+                            "`y` INT( 11 ) NOT NULL ,\n" +
+                            "`z` INT( 11 ) NOT NULL ,\n" +
                             "`accepted` TINYINT( 1 ) NOT NULL DEFAULT '0',\n" +
                             "`expired` TINYINT( 1 ) NOT NULL DEFAULT '0',\n" +
                             "PRIMARY KEY ( `id` )\n" +
@@ -47,14 +53,18 @@ public class PointsTable extends Table {
     public void addPoints(Warning warning) {
         try {
             getConnection().prepareStatement(
-                    "INSERT INTO " + getTableName() + " (player, punisher, amount, reason, detail, date) " +
+                    "INSERT INTO " + getTableName() + " (player, punisher, amount, reason, detail, date, world, x, y, z) " +
                             "VALUES (" +
                             "'" + warning.getPlayer() + "'" + "," +
                             "'" + warning.getPunisher() + "'" + "," +
                             "'" + warning.getReason().getPoints() + "'" + "," +
                             "'" + warning.getReason().getName() + "'" + "," +
                             "'" + warning.getReason().getDetail() + "'" + "," +
-                            "'" + warning.getDate() + "'" +
+                            "'" + warning.getDate() + "'" + "," +
+                            "'" + warning.getLocation().getWorld().getName() + "'" + "," +
+                            "'" + warning.getLocation().getBlockX() + "'" + "," +
+                            "'" + warning.getLocation().getBlockY() + "'" + "," +
+                            "'" + warning.getLocation().getBlockZ() + "'" +
                             ");"
             ).execute();
         } catch (SQLException e) {
@@ -87,11 +97,7 @@ public class PointsTable extends Table {
                     "SELECT * FROM " + getTableName() + " WHERE player = '" + player + "'").executeQuery();
 
             while (resultSet.next()) {
-                warning = new Warning(
-                        resultSet.getString("player"),
-                        resultSet.getString("punisher"),
-                        Reason.getReason(resultSet.getString("reason")).clone().setDetail(resultSet.getString("detail")),
-                        resultSet.getString("date"));
+                warning = getWarningByResultSet(resultSet);
                 warnings.add(warning);
             }
         } catch (SQLException e) {
@@ -136,16 +142,21 @@ public class PointsTable extends Table {
                     "SELECT * FROM " + getTableName() + " WHERE accepted='0'").executeQuery();
 
             while (resultSet.next()) {
-                warning = new Warning(
-                        resultSet.getString("player"),
-                        resultSet.getString("punisher"),
-                        Reason.getReason(resultSet.getString("reason")).clone().setDetail(resultSet.getString("detail")),
-                        resultSet.getString("date"));
+                warning = getWarningByResultSet(resultSet);
                 warnings.add(warning);
             }
         } catch (SQLException e) {
             CommandBook.logger().warning(e.getMessage());
         }
         return warnings;
+    }
+
+    private Warning getWarningByResultSet(ResultSet resultSet) throws SQLException {
+        return new Warning(
+                resultSet.getString("player"),
+                resultSet.getString("punisher"),
+                Reason.getReason(resultSet.getString("reason")).clone().setDetail(resultSet.getString("detail")),
+                resultSet.getString("date"),
+                new Location(Bukkit.getWorld(resultSet.getString("world")), resultSet.getInt("x"), resultSet.getInt("y"), resultSet.getInt("z")));
     }
 }
