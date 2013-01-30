@@ -68,6 +68,7 @@ public class UnbanCommand {
                     .addPoints(
                             new Warning(player, sender.getName(),
                                     new Reason("Unban", -points, 0), DateUtil.getCurrentDateString(), location));
+            Database.getTable(PointsTable.class).setAccepted(player);
         }
         Database.getTable(BansTable.class).unban(player);
 
