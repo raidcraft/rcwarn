@@ -16,6 +16,7 @@ import de.raidcraft.rcwarn.util.Warning;
 import de.raidcraft.util.DateUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -53,17 +54,20 @@ public class UnbanCommand {
 
         Ban ban = Database.getTable(BansTable.class).getBan(player);
         if(ban == null || ban.isExpired()) {
-            throw new CommandException("Der Spieler ist nicht gebannt!");
+            throw new CommandException("Der Spieler '" + player + "' ist nicht gebannt!");
         }
 
-
         if(!ban.isTemporary()) {
+            Location location = null;
+            if(sender instanceof Player) {
+                location = ((Player) sender).getLocation();
+            }
             int points = Database.getTable(PointsTable.class).getAllPoints(player);
             points -= BanManager.INST.getHighestBanLevel().getPoints() - 2;
             Database.getTable(PointsTable.class)
                     .addPoints(
                             new Warning(player, sender.getName(),
-                                    new Reason("Unban", -points, 0), DateUtil.getCurrentDateString(), ((Player)sender).getLocation()));
+                                    new Reason("Unban", -points, 0), DateUtil.getCurrentDateString(), location));
         }
         Database.getTable(BansTable.class).unban(player);
 

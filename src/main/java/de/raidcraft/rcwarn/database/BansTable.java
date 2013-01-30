@@ -2,6 +2,7 @@ package de.raidcraft.rcwarn.database;
 
 import com.sk89q.commandbook.CommandBook;
 import de.raidcraft.api.database.Table;
+import de.raidcraft.rcwarn.BanManager;
 import de.raidcraft.rcwarn.util.Ban;
 
 import java.sql.ResultSet;
@@ -48,15 +49,28 @@ public class BansTable extends Table {
                             "'" + ban.getExpiration() + "'" +
                             ");"
             ).execute();
+            BanManager.INST.setLocalBukkitBan(ban.getPlayer(), true);
         } catch (SQLException e) {
             CommandBook.logger().warning(e.getMessage());
         }
     }
 
     public Ban getBan(String player) {
+        return getLastBan(player, false);
+    }
+
+    public Ban getLastBan(String player) {
+        return getLastBan(player, true);
+    }
+
+    public Ban getLastBan(String player, boolean alsoUnbanned) {
+        String unbannedFilter = "";
+        if(!alsoUnbanned) {
+            unbannedFilter = "AND unbanned='0'";
+        }
         try {
             ResultSet resultSet = getConnection().prepareStatement(
-                    "SELECT * FROM " + getTableName() + " WHERE player='" + player + "' ORDER BY id DESC").executeQuery();
+                    "SELECT * FROM " + getTableName() + " WHERE player='" + player + "' " + unbannedFilter + " ORDER BY id DESC").executeQuery();
 
             while (resultSet.next()) {
                 return new Ban(resultSet.getString("player"), resultSet.getInt("points"), resultSet.getString("date"), resultSet.getString("expiration"), resultSet.getBoolean("unbanned"));
@@ -71,6 +85,7 @@ public class BansTable extends Table {
         try {
             getConnection().prepareStatement(
                     "UPDATE " + getTableName() + " SET unbanned = '1' WHERE player = '" + player + "' ORDER BY ID DESC LIMIT 1").execute();
+            BanManager.INST.setLocalBukkitBan(player, false);
         } catch (SQLException e) {
             CommandBook.logger().warning(e.getMessage());
         }

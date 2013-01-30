@@ -27,6 +27,7 @@ public class PlayerListener implements Listener {
         Ban ban = Database.getTable(BansTable.class).getBan(event.getName());
         // no or old ban
         if(ban == null || ban.isExpired()) {
+            Database.getTable(BansTable.class).unban(event.getName());
             BanManager.INST.checkPlayer(event.getName());
             return;
         }

@@ -64,8 +64,9 @@ public class RCWarn extends BasePlugin implements Component {
 
     public static class LocalConfiguration extends ConfigurationBase<RCWarn> {
 
-        @Setting("ban-text") public String banText = "Du wurdest %e gebannt! Schaue im Forum nach weshalb! (forum.raid-craft.de)";
+        @Setting("ban-text") public String banText = "Du wurdest %e gebannt! Erfahre im Forum nach weshalb! (forum.raid-craft.de)";
         @Setting("warning-cooldown") public int warningCooldown = 180;
+        @Setting("supporter-max-warn-points") public int supporterMaxWarnPoints = 2;
 
         public LocalConfiguration(RCWarn plugin) {
 

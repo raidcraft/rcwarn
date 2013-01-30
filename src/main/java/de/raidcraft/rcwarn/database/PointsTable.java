@@ -52,6 +52,18 @@ public class PointsTable extends Table {
 
     public void addPoints(Warning warning) {
         try {
+            String worldName = "";
+            int x = 0;
+            int y = 0;
+            int z = 0;
+
+            if(warning.getLocation() != null) {
+                worldName = warning.getLocation().getWorld().getName();
+                x = warning.getLocation().getBlockX();
+                y = warning.getLocation().getBlockY();
+                z = warning.getLocation().getBlockZ();
+            }
+
             getConnection().prepareStatement(
                     "INSERT INTO " + getTableName() + " (player, punisher, amount, reason, detail, date, world, x, y, z) " +
                             "VALUES (" +
@@ -61,10 +73,10 @@ public class PointsTable extends Table {
                             "'" + warning.getReason().getName() + "'" + "," +
                             "'" + warning.getReason().getDetail() + "'" + "," +
                             "'" + warning.getDate() + "'" + "," +
-                            "'" + warning.getLocation().getWorld().getName() + "'" + "," +
-                            "'" + warning.getLocation().getBlockX() + "'" + "," +
-                            "'" + warning.getLocation().getBlockY() + "'" + "," +
-                            "'" + warning.getLocation().getBlockZ() + "'" +
+                            "'" + worldName + "'" + "," +
+                            "'" + x + "'" + "," +
+                            "'" + y + "'" + "," +
+                            "'" + z + "'" +
                             ");"
             ).execute();
         } catch (SQLException e) {
@@ -171,11 +183,21 @@ public class PointsTable extends Table {
     }
 
     private Warning getWarningByResultSet(ResultSet resultSet) throws SQLException {
+        Reason reason = Reason.getReason(resultSet.getString("reason"));
+        if(reason == null) {
+            reason = new Reason(resultSet.getString("reason"), resultSet.getInt("amount"), 0);
+        }
+        reason = reason.clone().setDetail(resultSet.getString("detail"));
+
+        Location location = null;
+        if(Bukkit.getWorld(resultSet.getString("world")) != null) {
+            location = new Location(Bukkit.getWorld(resultSet.getString("world")), resultSet.getInt("x"), resultSet.getInt("y"), resultSet.getInt("z"));
+        }
         return new Warning(
                 resultSet.getString("player"),
                 resultSet.getString("punisher"),
-                Reason.getReason(resultSet.getString("reason")).clone().setDetail(resultSet.getString("detail")),
+                reason,
                 resultSet.getString("date"),
-                new Location(Bukkit.getWorld(resultSet.getString("world")), resultSet.getInt("x"), resultSet.getInt("y"), resultSet.getInt("z")));
+                location);
     }
 }

@@ -5,7 +5,7 @@ import de.raidcraft.rcwarn.database.PointsTable;
 import de.raidcraft.rcwarn.util.Reason;
 import de.raidcraft.rcwarn.util.Warning;
 import de.raidcraft.util.DateUtil;
-import org.bukkit.entity.Player;
+import org.bukkit.Location;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,9 +20,9 @@ public class WarnManager {
 
     private Map<String, Warning> openWarnings = new HashMap<>();
 
-    public Warning addWarning(String player, Player punisher, Reason reason) {
+    public Warning addWarning(String player, String punisher, Location location, Reason reason) {
 
-        Warning warning = new Warning(player, punisher.getName(), reason, DateUtil.getCurrentDateString(), punisher.getLocation());
+        Warning warning = new Warning(player, punisher, reason, DateUtil.getCurrentDateString(), location);
         Database.getTable(PointsTable.class).addPoints(warning);
         openWarnings.put(player, warning);
         BanManager.INST.checkPlayer(player);

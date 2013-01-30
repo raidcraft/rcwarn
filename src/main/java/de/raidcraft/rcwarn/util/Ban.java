@@ -66,7 +66,7 @@ public class Ban {
     }
 
     public boolean isTemporary() {
-        if(getExpiration() == null || getExpiration() == "" || getExpiration() == "null") {
+        if(getExpiration() == null || getExpiration().equalsIgnoreCase("") || getExpiration().equalsIgnoreCase("null")) {
             return false;
         }
         return true;

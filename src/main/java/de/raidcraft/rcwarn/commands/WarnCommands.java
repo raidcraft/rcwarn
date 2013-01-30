@@ -12,6 +12,7 @@ import de.raidcraft.rcwarn.util.Warning;
 import de.raidcraft.util.DateUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -84,11 +85,19 @@ public class WarnCommands {
             reason.setDetail(context.getJoinedStrings(2));
         }
 
+        if(!sender.hasPermission("rcwarn.warn.unlimited") && reason.getPoints() > RCWarn.INST.config.supporterMaxWarnPoints) {
+            throw new CommandException("Supporter dürfen nur Warnungen mit max. " + RCWarn.INST.config.supporterMaxWarnPoints + " Punkten aussprechen!");
+        }
+
         sender.sendMessage(ChatColor.GREEN + "Du hast '" + ChatColor.YELLOW + player + ChatColor.GREEN + "' verwarnt! "
                 + ChatColor.YELLOW + "(" + ChatColor.RED + reason.getName() + ChatColor.YELLOW + ")");
         Bukkit.broadcastMessage(ChatColor.DARK_RED + player + " wurde verwarnt (" + reason.getName() + ")!");
 
-        lastWarnings.put(player, WarnManager.INST.addWarning(player, (Player) sender, reason));
+        Location location = null;
+        if(sender instanceof Player) {
+            location = ((Player) sender).getLocation();
+        }
+        lastWarnings.put(player, WarnManager.INST.addWarning(player, sender.getName(), location, reason));
     }
 }
 
