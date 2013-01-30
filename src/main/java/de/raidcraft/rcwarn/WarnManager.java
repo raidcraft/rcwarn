@@ -59,7 +59,7 @@ public class WarnManager {
         player.sendMessage(ChatColor.RED.toString() + ChatColor.ITALIC + "Du wurdest verwarnt!");
         player.sendMessage(ChatColor.YELLOW + "Grund: " + ChatColor.RED + warning.getReason().getName() + " (" + warning.getReason().getDetail() + ")");
         player.sendMessage(ChatColor.YELLOW + "Punkte: " + ChatColor.RED + warning.getReason().getPoints() +
-                " (Nächster Ban: " + points + "/" + BanManager.INST.getNextBanLevel(warning.getReason().getPoints()).getPoints() + ")");
+                " (Nächster Ban: " + points + "/" + BanManager.INST.getNextBanLevel(points).getPoints() + ")");
         player.sendMessage(ChatColor.RED + "Gebe " + ChatColor.WHITE + "/rcconfirm" + ChatColor.RED + " ein um die Warnung zur Kenntnis zu nehmen!");
         player.sendMessage(ChatColor.YELLOW + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 

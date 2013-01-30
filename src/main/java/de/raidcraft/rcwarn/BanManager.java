@@ -1,10 +1,12 @@
 package de.raidcraft.rcwarn;
 
+import de.raidcraft.RaidCraft;
 import de.raidcraft.api.database.Database;
 import de.raidcraft.rcwarn.database.BansTable;
 import de.raidcraft.rcwarn.database.PointsTable;
 import de.raidcraft.rcwarn.util.Ban;
 import de.raidcraft.rcwarn.util.BanLevel;
+import de.raidcraft.rcwarn.util.Warning;
 import de.raidcraft.util.DateUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -12,6 +14,9 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
 import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * @author Philip
@@ -51,28 +56,55 @@ public class BanManager {
 
     public void checkPlayer(String player) {
 
-        BanLevel nextBan = null;
+        BanLevel preBanLevel = null;
         int playerPoints = Database.getTable(PointsTable.class).getAllPoints(player);
         for(BanLevel banLevel : banLevels) {
             if(banLevel.getPoints() > playerPoints) {
                 continue;
             }
-            nextBan = banLevel;
+            preBanLevel = banLevel;
         }
 
-        // not ban level reached
-        if(nextBan == null) {
+        // no ban level reached
+        if(preBanLevel == null) {
             return;
         }
 
-        // get sure that ban level not reached before
-        Ban lastBan = Database.getTable(BansTable.class).getLastBan(player);
-        if(lastBan != null && lastBan.getPoints() >= nextBan.getPoints() && BanManager.INST.getHighestBanLevel().getPoints() != nextBan.getPoints()) {
+        /*
+         * get sure that ban level not reached before
+         */
+        Ban lastBan = Database.getTable(BansTable.class).getLastBan(player);                        // get last ban
+        List<Warning> allWarnings = Database.getTable(PointsTable.class).getAllWarnings(player);    // get all warnings
+        // sort warnings
+        SortedMap<Long, Warning> orderedWarnings = new TreeMap<>();
+        for(Warning warning : allWarnings) {
+            if(warning.isExpired()) continue;
+            orderedWarnings.put(DateUtil.getTimeStamp(warning.getDate()), warning);
+        }
+
+        RaidCraft.LOGGER.info("preBanLevel: " + preBanLevel.getPoints());
+        RaidCraft.LOGGER.info("lastBan: " + lastBan.getPoints());
+
+        // check if points was below preBanLevel after last ban
+        int totalPoints = 0;
+        boolean wasBelow = false;
+        for(Map.Entry<Long, Warning> entry : orderedWarnings.entrySet()) {
+            Long date = entry.getKey();
+            Warning warning = entry.getValue();
+            totalPoints += warning.getReason().getPoints();
+            RaidCraft.LOGGER.info("date: " + warning.getDate());
+            RaidCraft.LOGGER.info("totalPoints: " + totalPoints);
+            if((lastBan == null || date > DateUtil.getTimeStamp(lastBan.getDate())) && totalPoints < preBanLevel.getPoints()) {
+                wasBelow = true;
+                break;
+            }
+        }
+        if(!wasBelow) {
             return;
         }
 
         // ban player
-        String expiration = nextBan.getExpirationFromNow();
+        String expiration = preBanLevel.getExpirationFromNow();
         Ban newBan = new Ban(player, playerPoints, DateUtil.getCurrentDateString(), expiration);
         Database.getTable(PointsTable.class).setAccepted(player);
         Database.getTable(BansTable.class).addBan(newBan);

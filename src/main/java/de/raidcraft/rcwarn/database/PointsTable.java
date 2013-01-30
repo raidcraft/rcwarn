@@ -185,21 +185,18 @@ public class PointsTable extends Table {
     }
 
     private Warning getWarningByResultSet(ResultSet resultSet) throws SQLException {
-        Reason reason = Reason.getReason(resultSet.getString("reason"));
-        if(reason == null) {
-            reason = new Reason(resultSet.getString("reason"), resultSet.getInt("amount"), 0);
-        }
-        reason = reason.clone().setDetail(resultSet.getString("detail"));
-
+        Reason reason = new Reason(resultSet.getString("reason"), resultSet.getInt("amount"), 0);
         Location location = null;
         if(Bukkit.getWorld(resultSet.getString("world")) != null) {
             location = new Location(Bukkit.getWorld(resultSet.getString("world")), resultSet.getInt("x"), resultSet.getInt("y"), resultSet.getInt("z"));
         }
-        return new Warning(
+        Warning warning = new Warning(
                 resultSet.getString("player"),
                 resultSet.getString("punisher"),
                 reason,
                 resultSet.getString("date"),
                 location);
+        warning.setExpired(resultSet.getBoolean("expired"));
+        return warning;
     }
 }

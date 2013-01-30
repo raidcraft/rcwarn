@@ -12,6 +12,7 @@ public class Warning {
     Reason reason;
     String date;
     Location location;
+    private boolean expired = false;
 
     public Warning(String player, String punisher, Reason reason, String date, Location location) {
 
@@ -45,5 +46,15 @@ public class Warning {
     public Location getLocation() {
 
         return location;
+    }
+
+    public boolean isExpired() {
+
+        return expired;
+    }
+
+    public void setExpired(boolean expired) {
+
+        this.expired = expired;
     }
 }
