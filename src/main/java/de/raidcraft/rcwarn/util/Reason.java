@@ -41,7 +41,7 @@ public class Reason {
     private String name;
     private List<String> aliases = new ArrayList<>();
     private int points;
-    private String detail;
+    private String detail = "";
     private long duration;
 
     public Reason(String name, int points, long duration) {
