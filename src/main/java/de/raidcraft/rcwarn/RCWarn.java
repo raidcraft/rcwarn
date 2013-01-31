@@ -10,10 +10,7 @@ import de.raidcraft.api.Component;
 import de.raidcraft.api.config.ConfigurationBase;
 import de.raidcraft.api.config.Setting;
 import de.raidcraft.api.database.Database;
-import de.raidcraft.rcwarn.commands.AdminCommands;
-import de.raidcraft.rcwarn.commands.UnbanCommand;
-import de.raidcraft.rcwarn.commands.WarnCommand;
-import de.raidcraft.rcwarn.commands.WarningsCommand;
+import de.raidcraft.rcwarn.commands.*;
 import de.raidcraft.rcwarn.database.BanLevelsTable;
 import de.raidcraft.rcwarn.database.BansTable;
 import de.raidcraft.rcwarn.database.PointsTable;
@@ -41,7 +38,8 @@ public class RCWarn extends BasePlugin implements Component {
         registerCommands(WarnCommand.class);
         registerCommands(AdminCommands.class);
         registerCommands(UnbanCommand.class);
-        registerCommands(WarningsCommand.class);
+        registerCommands(WarningsInfoCommand.class);
+        registerCommands(BansInfoCommand.class);
 
         CommandBook.registerEvents(new PlayerListener());
         new Database(RaidCraft.getComponent(RaidCraftPlugin.class)).registerTable(BansTable.class, new BansTable());

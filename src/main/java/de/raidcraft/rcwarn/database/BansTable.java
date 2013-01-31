@@ -7,6 +7,8 @@ import de.raidcraft.rcwarn.util.Ban;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Philip
@@ -57,6 +59,22 @@ public class BansTable extends Table {
 
     public Ban getBan(String player) {
         return getLastBan(player, false);
+    }
+
+    public List<Ban> getBans(String player) {
+        List<Ban> bans = new ArrayList<>();
+        try {
+            ResultSet resultSet = getConnection().prepareStatement(
+                    "SELECT * FROM " + getTableName() + " WHERE player='" + player + "' ORDER BY id DESC").executeQuery();
+
+            while (resultSet.next()) {
+                Ban ban = new Ban(resultSet.getString("player"), resultSet.getInt("points"), resultSet.getString("date"), resultSet.getString("expiration"), resultSet.getBoolean("unbanned"));
+                bans.add(ban);
+            }
+        } catch (SQLException e) {
+            CommandBook.logger().warning(e.getMessage());
+        }
+        return bans;
     }
 
     public Ban getLastBan(String player) {
