@@ -54,10 +54,14 @@ public class WarnManager {
     }
 
     public void informPlayer(Player player, Warning warning) {
+        String detail = "keine Details";
+        if(warning.getReason().getDetail() != null && warning.getReason().getDetail().length() > 0) {
+            detail = warning.getReason().getDetail();
+        }
         int points = Database.getTable(PointsTable.class).getAllPoints(player.getName());
         player.sendMessage(ChatColor.YELLOW + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         player.sendMessage(ChatColor.RED.toString() + ChatColor.ITALIC + "Du wurdest verwarnt!");
-        player.sendMessage(ChatColor.YELLOW + "Grund: " + ChatColor.RED + warning.getReason().getName() + " (" + warning.getReason().getDetail() + ")");
+        player.sendMessage(ChatColor.YELLOW + "Grund: " + ChatColor.RED + warning.getReason().getName() + " (" + detail + ")");
         player.sendMessage(ChatColor.YELLOW + "Punkte: " + ChatColor.RED + warning.getReason().getPoints() +
                 " (Nächster Ban: " + points + "/" + BanManager.INST.getNextBanLevel(points).getPoints() + ")");
         player.sendMessage(ChatColor.RED + "Gebe " + ChatColor.WHITE + "/rcconfirm" + ChatColor.RED + " ein um die Warnung zur Kenntnis zu nehmen!");

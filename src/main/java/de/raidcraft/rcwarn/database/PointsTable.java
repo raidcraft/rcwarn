@@ -186,6 +186,7 @@ public class PointsTable extends Table {
 
     private Warning getWarningByResultSet(ResultSet resultSet) throws SQLException {
         Reason reason = new Reason(resultSet.getString("reason"), resultSet.getInt("amount"), 0);
+        reason.setDetail(resultSet.getString("detail"));
         Location location = null;
         if(Bukkit.getWorld(resultSet.getString("world")) != null) {
             location = new Location(Bukkit.getWorld(resultSet.getString("world")), resultSet.getInt("x"), resultSet.getInt("y"), resultSet.getInt("z"));

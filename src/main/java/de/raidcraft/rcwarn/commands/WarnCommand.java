@@ -22,11 +22,11 @@ import java.util.Map;
 /**
  * @author Philip
  */
-public class WarnCommands {
+public class WarnCommand {
 
     private Map<String, Warning> lastWarnings = new HashMap<>();
 
-    public WarnCommands(RCWarn module) {
+    public WarnCommand(RCWarn module) {
     }
 
     @Command(
@@ -65,6 +65,9 @@ public class WarnCommands {
             else if (lastWarning != null) {
                 lastWarnings.remove(player);
             }
+        }
+        else if(!sender.hasPermission("rcwarn.warn.force")) {
+            throw new CommandException("Du darfst Warnungen nicht erzwingen!");
         }
 
         //check reason

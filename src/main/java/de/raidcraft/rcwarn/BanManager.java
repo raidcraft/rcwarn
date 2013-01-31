@@ -1,6 +1,5 @@
 package de.raidcraft.rcwarn;
 
-import de.raidcraft.RaidCraft;
 import de.raidcraft.api.database.Database;
 import de.raidcraft.rcwarn.database.BansTable;
 import de.raidcraft.rcwarn.database.PointsTable;
@@ -82,9 +81,6 @@ public class BanManager {
             orderedWarnings.put(DateUtil.getTimeStamp(warning.getDate()), warning);
         }
 
-        RaidCraft.LOGGER.info("preBanLevel: " + preBanLevel.getPoints());
-        RaidCraft.LOGGER.info("lastBan: " + lastBan.getPoints());
-
         // check if points was below preBanLevel after last ban
         int totalPoints = 0;
         boolean wasBelow = false;
@@ -92,8 +88,6 @@ public class BanManager {
             Long date = entry.getKey();
             Warning warning = entry.getValue();
             totalPoints += warning.getReason().getPoints();
-            RaidCraft.LOGGER.info("date: " + warning.getDate());
-            RaidCraft.LOGGER.info("totalPoints: " + totalPoints);
             if((lastBan == null || date > DateUtil.getTimeStamp(lastBan.getDate())) && totalPoints < preBanLevel.getPoints()) {
                 wasBelow = true;
                 break;
