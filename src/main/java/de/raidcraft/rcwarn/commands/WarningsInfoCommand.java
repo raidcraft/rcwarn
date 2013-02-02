@@ -28,7 +28,7 @@ public class WarningsInfoCommand {
     }
 
     @Command(
-            aliases = {"warnings"},
+            aliases = {"warnings", "warns"},
             desc = "Show the warnings by player"
     )
     public void rcwarn(CommandContext context, CommandSender sender) throws CommandException {
@@ -53,33 +53,38 @@ public class WarningsInfoCommand {
         // get all warnings
         long cuttentTime = System.currentTimeMillis();
         List<Warning> allWarnings = Database.getTable(PointsTable.class).getAllWarnings(player);
-        // sort warnings
-        SortedMap<Long, Warning> orderedWarnings = new TreeMap<>();
-        for(Warning warning : allWarnings) {
-            orderedWarnings.put(cuttentTime - DateUtil.getTimeStamp(warning.getDate()), warning);
+
+        if(allWarnings.size() == 0) {
+            sender.sendMessage(ChatColor.GREEN + "Du hast noch keine Warnungen!");
         }
-
-        int i = 0;
-        for(Map.Entry<Long, Warning> entry : orderedWarnings.entrySet()) {
-            i++;
-            if(i > NUMBER_PRINTED_WARNINGS) break;
-
-            Warning warning = entry.getValue();
-
-            String strike = "";
-            if(warning.isExpired())
-                strike = ChatColor.STRIKETHROUGH.toString();
-
-            String detail = "keine Details";
-            if(warning.getReason().getDetail() != null && warning.getReason().getDetail().length() > 0) {
-                detail = warning.getReason().getDetail();
+        else {
+            // sort warnings
+            SortedMap<Long, Warning> orderedWarnings = new TreeMap<>();
+            for(Warning warning : allWarnings) {
+                orderedWarnings.put(cuttentTime - DateUtil.getTimeStamp(warning.getDate()), warning);
             }
 
-            sender.sendMessage(strike + warning.getDate() + " " +
-                    ChatColor.YELLOW + strike + warning.getReason().getName() + " - " + detail +
-                    " - " + ChatColor.RED + strike + warning.getReason().getPoints());
-        }
+            int i = 0;
+            for(Map.Entry<Long, Warning> entry : orderedWarnings.entrySet()) {
+                i++;
+                if(i > NUMBER_PRINTED_WARNINGS) break;
 
+                Warning warning = entry.getValue();
+
+                String strike = "";
+                if(warning.isExpired())
+                    strike = ChatColor.STRIKETHROUGH.toString();
+
+                String detail = "keine Details";
+                if(warning.getReason().getDetail() != null && warning.getReason().getDetail().length() > 0) {
+                    detail = warning.getReason().getDetail();
+                }
+
+                sender.sendMessage(strike + warning.getDate() + " " +
+                        ChatColor.YELLOW + strike + warning.getReason().getName() + " - " + detail +
+                        " - " + ChatColor.RED + strike + warning.getReason().getPoints());
+            }
+        }
         sender.sendMessage("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
     }
 }

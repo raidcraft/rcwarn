@@ -55,32 +55,37 @@ public class BansInfoCommand {
         // get all warnings
         long cuttentTime = System.currentTimeMillis();
         List<Ban> allBans = Database.getTable(BansTable.class).getBans(player);
-        // sort bans
-        SortedMap<Long, Ban> orderedBans = new TreeMap<>();
-        for(Ban ban : allBans) {
-            orderedBans.put(cuttentTime - DateUtil.getTimeStamp(ban.getDate()), ban);
+
+        if(allBans.size() == 0) {
+            sender.sendMessage(ChatColor.GREEN + "Du hast noch keine Bans!");
         }
-
-        int i = 0;
-        for(Map.Entry<Long, Ban> entry : orderedBans.entrySet()) {
-            i++;
-            if(i > NUMBER_PRINTED_BANS) break;
-
-            Ban ban = entry.getValue();
-
-            String strike = "";
-            if(ban.isExpired())
-                strike = ChatColor.STRIKETHROUGH.toString();
-
-            String expiration = "Unban Request";
-            if(ban.isTemporary()) {
-                expiration = ban.getExpiration();
+        else {
+            // sort bans
+            SortedMap<Long, Ban> orderedBans = new TreeMap<>();
+            for(Ban ban : allBans) {
+                orderedBans.put(cuttentTime - DateUtil.getTimeStamp(ban.getDate()), ban);
             }
 
-            sender.sendMessage(strike + ban.getDate() + " " +
-                    ChatColor.YELLOW + strike + " bis " + ChatColor.WHITE + strike + expiration + ChatColor.RED + strike + " Pt.: " + ban.getPoints());
-        }
+            int i = 0;
+            for(Map.Entry<Long, Ban> entry : orderedBans.entrySet()) {
+                i++;
+                if(i > NUMBER_PRINTED_BANS) break;
 
+                Ban ban = entry.getValue();
+
+                String strike = "";
+                if(ban.isExpired())
+                    strike = ChatColor.STRIKETHROUGH.toString();
+
+                String expiration = "Unban Request";
+                if(ban.isTemporary()) {
+                    expiration = ban.getExpiration();
+                }
+
+                sender.sendMessage(strike + ban.getDate() + " " +
+                        ChatColor.YELLOW + strike + " bis " + ChatColor.WHITE + strike + expiration + ChatColor.RED + strike + " Pt.: " + ban.getPoints());
+            }
+        }
         sender.sendMessage("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
     }
 }
