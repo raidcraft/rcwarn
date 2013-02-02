@@ -31,19 +31,23 @@ public class BansInfoCommand {
 
     @Command(
             aliases = {"bans"},
-            desc = "Show the bans by player"
+            desc = "Show the bans by player",
+            flags = "i"
     )
     public void rcwarn(CommandContext context, CommandSender sender) throws CommandException {
 
         String player = sender.getName();
         if(context.argsLength() > 0 && sender.hasPermission("rcwarn.info.other")) {
-            //check player
-            player = context.getString(0);
-            RCPlayer rcplayer = RCWarn.INST.getPlayer(player);
-            if(rcplayer == null) {
-                throw new CommandException("Der angegebene Spieler ist unbekannt! (Verschrieben?)");
+            if(context.hasFlag('i')) {
+                player = context.getString(0);
             }
-            player = rcplayer.getDisplayName();
+            else {
+                RCPlayer rcplayer = RCWarn.INST.getPlayer(player);
+                if(rcplayer == null) {
+                    throw new CommandException("Der angegebene Spieler ist angeblich unbekannt! Nutze -i um das zu ignorieren!");
+                }
+                player = rcplayer.getDisplayName();
+            }
         }
 
         int points = Database.getTable(PointsTable.class).getAllPoints(player);

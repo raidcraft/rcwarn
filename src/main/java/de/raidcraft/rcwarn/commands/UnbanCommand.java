@@ -35,7 +35,8 @@ public class UnbanCommand {
 
     @Command(
             aliases = {"unban", "pardon"},
-            desc = "Unban command"
+            desc = "Unban command",
+            flags = "i"
     )
     @CommandPermissions("rcwarn.unban")
     public void rcwarn(CommandContext context, CommandSender sender) throws CommandException {
@@ -46,11 +47,18 @@ public class UnbanCommand {
 
         //check player
         String player = context.getString(0);
-        RCPlayer rcplayer = RCWarn.INST.getPlayer(player);
-        if(rcplayer == null) {
-            throw new CommandException("Der angegebene Spieler ist unbekannt! (Verschrieben?)");
+        if(context.argsLength() > 0 && sender.hasPermission("rcwarn.info.other")) {
+            if(context.hasFlag('i')) {
+                player = context.getString(0);
+            }
+            else {
+                RCPlayer rcplayer = RCWarn.INST.getPlayer(player);
+                if(rcplayer == null) {
+                    throw new CommandException("Der angegebene Spieler ist angeblich unbekannt! Nutze -i um das zu ignorieren!");
+                }
+                player = rcplayer.getDisplayName();
+            }
         }
-        player = rcplayer.getDisplayName();
 
         Ban ban = Database.getTable(BansTable.class).getBan(player);
         if(ban == null || ban.isExpired()) {

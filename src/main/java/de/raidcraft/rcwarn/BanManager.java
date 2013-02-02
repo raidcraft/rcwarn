@@ -88,7 +88,7 @@ public class BanManager {
             Long date = entry.getKey();
             Warning warning = entry.getValue();
             totalPoints += warning.getReason().getPoints();
-            if((lastBan == null || date > DateUtil.getTimeStamp(lastBan.getDate())) && totalPoints < preBanLevel.getPoints()) {
+            if(lastBan == null || (date > DateUtil.getTimeStamp(lastBan.getDate()) && totalPoints < preBanLevel.getPoints())) {
                 wasBelow = true;
                 break;
             }
