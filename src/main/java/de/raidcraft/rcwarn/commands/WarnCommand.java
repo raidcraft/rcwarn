@@ -32,7 +32,7 @@ public class WarnCommand {
     @Command(
             aliases = {"warn", "ban"},
             desc = "Warn command",
-            flags = "f"
+            flags = "fi"
     )
     @CommandPermissions("rcwarn.warn")
     public void rcwarn(CommandContext context, CommandSender sender) throws CommandException {
@@ -43,14 +43,15 @@ public class WarnCommand {
 
         //check player
         String player = context.getString(0);
-        RCPlayer rcplayer = RCWarn.INST.getPlayer(player);
-        if(rcplayer == null) {
-            throw new CommandException("Der angegebene Spieler ist unbekannt! (Verschrieben?)");
-        }
-        player = rcplayer.getDisplayName();
-
-        if(rcplayer.hasPermission("rcwarn.ignore")) {
-            throw new CommandException("Dieser Spieler kann nicht verwarnt werden! (Mod / Admin?)");
+        if(!context.hasFlag('i')) {
+            RCPlayer rcplayer = RCWarn.INST.getPlayer(player);
+            if(rcplayer == null) {
+                throw new CommandException("Der angegebene Spieler ist unbekannt! Nutze -i um ihn trotzdem zu verwarnen!");
+            }
+            if(rcplayer.hasPermission("rcwarn.ignore")) {
+                throw new CommandException("Dieser Spieler kann nicht verwarnt werden! Mod / Admin?");
+            }
+            player = rcplayer.getDisplayName();
         }
 
         if(!context.hasFlag('f')) {

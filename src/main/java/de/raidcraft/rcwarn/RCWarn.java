@@ -3,7 +3,6 @@ package de.raidcraft.rcwarn;
 import com.zachsthings.libcomponents.ComponentInformation;
 import com.zachsthings.libcomponents.Depend;
 import de.raidcraft.api.BasePlugin;
-import de.raidcraft.api.Component;
 import de.raidcraft.api.config.ConfigurationBase;
 import de.raidcraft.api.config.Setting;
 import de.raidcraft.api.database.Database;
@@ -22,7 +21,7 @@ import de.raidcraft.rcwarn.listener.PlayerListener;
         desc = "Provides warn and ban system."
 )
 @Depend(plugins = {"RaidCraft-API"})
-public class RCWarn extends BasePlugin implements Component {
+public class RCWarn extends BasePlugin {
 
     public LocalConfiguration config;
     public static RCWarn INST;
