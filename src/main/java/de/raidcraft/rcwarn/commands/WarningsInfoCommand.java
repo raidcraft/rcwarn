@@ -51,7 +51,7 @@ public class WarningsInfoCommand {
         int points = Database.getTable(PointsTable.class).getAllPoints(player);
 
         sender.sendMessage("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        sender.sendMessage(ChatColor.GREEN + "Die letzen Warnungen von " + player + "");
+        sender.sendMessage(ChatColor.GREEN + "Die letzen Verwarnungen von " + player + ":");
         sender.sendMessage(ChatColor.YELLOW + "Punkte/Nächster Ban: " + ChatColor.RED + points + "/" + BanManager.INST.getNextBanLevel(points).getPoints());
 
         // get all warnings
@@ -59,7 +59,7 @@ public class WarningsInfoCommand {
         List<Warning> allWarnings = Database.getTable(PointsTable.class).getAllWarnings(player);
 
         if(allWarnings.size() == 0) {
-            sender.sendMessage(ChatColor.GREEN + "Du hast noch keine Warnungen!");
+            sender.sendMessage(ChatColor.GREEN + "Du hast noch keine Verwarnungen!");
         }
         else {
             // sort warnings

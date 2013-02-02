@@ -53,7 +53,7 @@ public class BansInfoCommand {
         int points = Database.getTable(PointsTable.class).getAllPoints(player);
 
         sender.sendMessage("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        sender.sendMessage(ChatColor.GREEN + "Die letzen Bans von " + player + "");
+        sender.sendMessage(ChatColor.GREEN + "Die letzen Bans von " + player + ":");
         sender.sendMessage(ChatColor.YELLOW + "Punkte/Nächster Ban: " + ChatColor.RED + points + "/" + BanManager.INST.getNextBanLevel(points).getPoints());
 
         // get all warnings
