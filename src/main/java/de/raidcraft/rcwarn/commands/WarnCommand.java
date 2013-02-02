@@ -92,9 +92,16 @@ public class WarnCommand {
             throw new CommandException("Supporter dürfen nur Warnungen mit max. " + RCWarn.INST.config.supporterMaxWarnPoints + " Punkten aussprechen!");
         }
 
-        sender.sendMessage(ChatColor.GREEN + "Du hast '" + ChatColor.YELLOW + player + ChatColor.GREEN + "' verwarnt! "
-                + ChatColor.YELLOW + "(" + ChatColor.RED + reason.getName() + ChatColor.YELLOW + ")");
-        Bukkit.broadcastMessage(ChatColor.DARK_RED + player + " hat eine Verwarnung erhalten! (" + reason.getName() + ")");
+        if(reason.getPoints() > 0) {
+            sender.sendMessage(ChatColor.GREEN + "Du hast '" + ChatColor.YELLOW + player + ChatColor.GREEN + "' verwarnt! "
+                    + ChatColor.YELLOW + "(" + ChatColor.RED + reason.getName() + ChatColor.YELLOW + ")");
+            Bukkit.broadcastMessage(ChatColor.DARK_RED + player + " hat eine Verwarnung erhalten! (" + reason.getName() + ")");
+        }
+        else {
+            sender.sendMessage(ChatColor.GREEN + "Du hast '" + ChatColor.YELLOW + player + ChatColor.GREEN + "' gelobt! "
+                    + ChatColor.YELLOW + "(" + ChatColor.RED + reason.getName() + ChatColor.YELLOW + ")");
+            Bukkit.broadcastMessage(ChatColor.DARK_RED + player + " hat ein Lob erhalten! (" + reason.getName() + ")");
+        }
 
         Location location = null;
         if(sender instanceof Player) {
