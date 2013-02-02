@@ -1,10 +1,7 @@
 package de.raidcraft.rcwarn;
 
-import com.sk89q.commandbook.CommandBook;
 import com.zachsthings.libcomponents.ComponentInformation;
 import com.zachsthings.libcomponents.Depend;
-import de.raidcraft.RaidCraft;
-import de.raidcraft.RaidCraftPlugin;
 import de.raidcraft.api.BasePlugin;
 import de.raidcraft.api.Component;
 import de.raidcraft.api.config.ConfigurationBase;
@@ -41,12 +38,11 @@ public class RCWarn extends BasePlugin implements Component {
         registerCommands(WarningsInfoCommand.class);
         registerCommands(BansInfoCommand.class);
 
-        CommandBook.registerEvents(new PlayerListener());
-        new Database(RaidCraft.getComponent(RaidCraftPlugin.class)).registerTable(BansTable.class, new BansTable());
-        new Database(RaidCraft.getComponent(RaidCraftPlugin.class)).registerTable(PointsTable.class, new PointsTable());
-        new Database(RaidCraft.getComponent(RaidCraftPlugin.class)).registerTable(ReasonsTable.class, new ReasonsTable())        ;
-        new Database(RaidCraft.getComponent(RaidCraftPlugin.class)).registerTable(BanLevelsTable.class, new BanLevelsTable())        ;
-
+        registerEvents(new PlayerListener());
+        registerTable(BansTable.class, new BansTable());
+        registerTable(PointsTable.class, new PointsTable());
+        registerTable(ReasonsTable.class, new ReasonsTable());
+        registerTable(BanLevelsTable.class, new BanLevelsTable());
 
         load();
     }
