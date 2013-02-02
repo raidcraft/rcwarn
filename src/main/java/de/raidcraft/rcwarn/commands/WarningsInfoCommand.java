@@ -40,7 +40,7 @@ public class WarningsInfoCommand {
                 player = context.getString(0);
             }
             else {
-                RCPlayer rcplayer = RCWarn.INST.getPlayer(player);
+                RCPlayer rcplayer = RCWarn.INST.getPlayer(context.getString(0));
                 if(rcplayer == null) {
                     throw new CommandException("Der angegebene Spieler ist angeblich unbekannt! Nutze -i um das zu ignorieren!");
                 }
