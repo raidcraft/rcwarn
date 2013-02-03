@@ -92,7 +92,7 @@ public class PointsTable extends Table {
         checkPointsExpiration(player);
         try {
             ResultSet resultSet = getConnection().prepareStatement(
-                    "SELECT * FROM " + getTableName() + " WHERE player='" + player + "' AND expired='0' OR permanent='1'").executeQuery();
+                    "SELECT * FROM " + getTableName() + " WHERE player='" + player + "' AND (expired='0' OR permanent='1')").executeQuery();
 
             while (resultSet.next()) {
                 points += resultSet.getInt("amount");
