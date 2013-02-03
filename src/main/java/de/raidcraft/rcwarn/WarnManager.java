@@ -60,11 +60,17 @@ public class WarnManager {
         }
         int points = Database.getTable(PointsTable.class).getAllPoints(player.getName());
         player.sendMessage(ChatColor.YELLOW + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        player.sendMessage(ChatColor.RED.toString() + ChatColor.ITALIC + "Du wurdest verwarnt!");
+        if(warning.getReason().getPoints() > 0)
+            player.sendMessage(ChatColor.RED.toString() + ChatColor.ITALIC + "Du wurdest verwarnt!");
+        else
+            player.sendMessage(ChatColor.RED.toString() + ChatColor.ITALIC + "Du wurdest gelobt!");
         player.sendMessage(ChatColor.YELLOW + "Grund: " + ChatColor.RED + warning.getReason().getName() + " (" + detail + ")");
         player.sendMessage(ChatColor.YELLOW + "Punkte: " + ChatColor.RED + warning.getReason().getPoints() +
                 " (Nächster Ban: " + points + "/" + BanManager.INST.getNextBanLevel(points).getPoints() + ")");
-        player.sendMessage(ChatColor.RED + "Gebe " + ChatColor.WHITE + "/rcconfirm" + ChatColor.RED + " ein um die Warnung zur Kenntnis zu nehmen!");
+        if(warning.getReason().getPoints() > 0)
+            player.sendMessage(ChatColor.RED + "Gebe " + ChatColor.WHITE + "/rcconfirm" + ChatColor.RED + " ein um die Warnung zur Kenntnis zu nehmen!");
+        else
+            player.sendMessage(ChatColor.RED + "Gebe " + ChatColor.WHITE + "/rcconfirm" + ChatColor.RED + " ein um das Lob zur Kenntnis zu nehmen!");
         player.sendMessage(ChatColor.YELLOW + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
         try {
