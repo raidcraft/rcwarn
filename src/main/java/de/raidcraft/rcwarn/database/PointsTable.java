@@ -44,6 +44,7 @@ public class PointsTable extends Table {
                             "`accepted` TINYINT( 1 ) NOT NULL DEFAULT '0',\n" +
                             "`expired` TINYINT( 1 ) NOT NULL DEFAULT '0',\n" +
                             "`permanent` TINYINT( 1 ) NOT NULL DEFAULT '0',\n" +
+                            "`posted` TINYINT( 1 ) NOT NULL DEFAULT '0',\n" +
                             "PRIMARY KEY ( `id` )\n" +
                             ")").execute();
         } catch (SQLException e) {

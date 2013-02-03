@@ -32,6 +32,7 @@ public class BansTable extends Table {
                             "`date` VARCHAR( 64 ) NOT NULL ,\n" +
                             "`expiration` VARCHAR( 64 ) DEFAULT NULL ,\n" +
                             "`unbanned` TINYINT( 1 ) DEFAULT '0' , \n" +
+                            "`posted` TINYINT( 1 ) NOT NULL DEFAULT '0',\n" +
                             "PRIMARY KEY ( `id` )\n" +
                             ")").execute();
         } catch (SQLException e) {
