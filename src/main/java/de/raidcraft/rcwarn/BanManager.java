@@ -101,6 +101,7 @@ public class BanManager {
         String expiration = preBanLevel.getExpirationFromNow();
         Ban newBan = new Ban(player, playerPoints, DateUtil.getCurrentDateString(), expiration);
         Database.getTable(PointsTable.class).setAccepted(player);
+        Database.getTable(PointsTable.class).setPermanent(player);
         Database.getTable(BansTable.class).addBan(newBan);
         kickBannedPlayer(player, newBan);
 

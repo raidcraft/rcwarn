@@ -43,6 +43,7 @@ public class PointsTable extends Table {
                             "`z` INT( 11 ) NOT NULL ,\n" +
                             "`accepted` TINYINT( 1 ) NOT NULL DEFAULT '0',\n" +
                             "`expired` TINYINT( 1 ) NOT NULL DEFAULT '0',\n" +
+                            "`permanent` TINYINT( 1 ) NOT NULL DEFAULT '0',\n" +
                             "PRIMARY KEY ( `id` )\n" +
                             ")").execute();
         } catch (SQLException e) {
@@ -90,7 +91,7 @@ public class PointsTable extends Table {
         checkPointsExpiration(player);
         try {
             ResultSet resultSet = getConnection().prepareStatement(
-                    "SELECT * FROM " + getTableName() + " WHERE player='" + player + "' AND expired='0'").executeQuery();
+                    "SELECT * FROM " + getTableName() + " WHERE player='" + player + "' AND expired='0' OR permanent='1'").executeQuery();
 
             while (resultSet.next()) {
                 points += resultSet.getInt("amount");
@@ -179,6 +180,15 @@ public class PointsTable extends Table {
         try {
             getConnection().prepareStatement(
                     "UPDATE " + getTableName() + " SET expired = '1' WHERE player = '" + warning.getPlayer() + "' AND date = '" +  warning.getDate() + "'").execute();
+        } catch (SQLException e) {
+            CommandBook.logger().warning(e.getMessage());
+        }
+    }
+
+    public void setPermanent(String player) {
+        try {
+            getConnection().prepareStatement(
+                    "UPDATE " + getTableName() + " SET permanent='1' WHERE player = '" + player + "'").execute();
         } catch (SQLException e) {
             CommandBook.logger().warning(e.getMessage());
         }
