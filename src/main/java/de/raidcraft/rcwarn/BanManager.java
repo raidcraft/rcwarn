@@ -104,7 +104,7 @@ public class BanManager {
         Database.getTable(PointsTable.class).setPermanent(player);
         Database.getTable(BansTable.class).addBan(newBan);
         kickBannedPlayer(player, newBan);
-        RCWarn.INST.postThreads();
+//        RCWarn.INST.postThreads();
         Bukkit.broadcastMessage(ChatColor.DARK_RED + player + " wurde gebannt (" + newBan.getEmbellishedExpiration() + ")!");
     }
 

@@ -30,7 +30,7 @@ public class WarnManager {
         Database.getTable(PointsTable.class).addPoints(warning);
         openWarnings.put(player, warning);
         BanManager.INST.checkPlayer(player);
-        RCWarn.INST.postThreads();
+//        RCWarn.INST.postThreads();
         if(Bukkit.getPlayer(player) != null) {
             WarnManager.INST.informPlayer(Bukkit.getPlayer(player), warning);
         }
