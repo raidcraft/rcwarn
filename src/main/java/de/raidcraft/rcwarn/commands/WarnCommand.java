@@ -96,12 +96,12 @@ public class WarnCommand {
         if(reason.getPoints() > 0) {
             sender.sendMessage(ChatColor.GREEN + "Du hast '" + ChatColor.YELLOW + player + ChatColor.GREEN + "' verwarnt! "
                     + ChatColor.YELLOW + "(" + ChatColor.RED + reason.getName() + ChatColor.YELLOW + ")");
-            Bukkit.broadcastMessage(ChatColor.DARK_RED + player + " hat eine Verwarnung erhalten! (" + reason.getName() + ")");
+            Bukkit.broadcastMessage(ChatColor.DARK_RED + player + " hat eine Verwarnung erhalten (" + reason.getName() + ")!");
         }
         else {
             sender.sendMessage(ChatColor.GREEN + "Du hast '" + ChatColor.YELLOW + player + ChatColor.GREEN + "' gelobt! "
                     + ChatColor.YELLOW + "(" + ChatColor.RED + reason.getName() + ChatColor.YELLOW + ")");
-            Bukkit.broadcastMessage(ChatColor.DARK_RED + player + " hat ein Lob erhalten! (" + reason.getName() + ")");
+            Bukkit.broadcastMessage(ChatColor.DARK_RED + player + " hat ein Lob erhalten (" + reason.getName() + ")!");
         }
 
         Location location = null;
