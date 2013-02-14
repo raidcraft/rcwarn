@@ -28,7 +28,7 @@ public class ReasonsTable extends Table {
                             "`points` INT( 11 ) NOT NULL ,\n" +
                             "`aliases` VARCHAR( 500 ) NOT NULL DEFAULT ''" + " ,\n" +
                             "`duration` BIGINT( 32 ) NOT NULL ,\n" +
-                            "`description` TEXT( 500 ) DEFAULT '' ,\n" +
+                            "`description` TEXT( 500 ),\n" +
                             "PRIMARY KEY ( `id` )\n" +
                             ")").execute();
         } catch (SQLException e) {

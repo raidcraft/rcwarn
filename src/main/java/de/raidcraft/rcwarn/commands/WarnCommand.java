@@ -49,6 +49,12 @@ public class WarnCommand {
                 throw new CommandException("Der angegebene Spieler ist unbekannt! Nutze -i um ihn trotzdem zu verwarnen!");
             }
             if(rcplayer.hasPermission("rcwarn.ignore")) {
+
+                if(sender instanceof Player) {
+                    ((Player) sender).kickPlayer("Du hast versucht einen Mod oder Admin zu verwarnen!");
+                    Bukkit.broadcastMessage(ChatColor.DARK_RED + sender.getName() + " hat versucht einen Mod/Admin zu verwarnen und wurde gekickt! Haha!");
+                    lastWarnings.put(sender.getName(), WarnManager.INST.addWarning(sender.getName(), "RCWarn", ((Player) sender).getLocation(), Reason.getReason("Putschversuch")));
+                }
                 throw new CommandException("Dieser Spieler kann nicht verwarnt werden! Mod / Admin?");
             }
             player = rcplayer.getDisplayName();
@@ -87,10 +93,6 @@ public class WarnCommand {
         }
         if(context.argsLength() > 2) {
             reason.setDetail(context.getJoinedStrings(2));
-        }
-
-        if(!sender.hasPermission("rcwarn.warn.unlimited") && reason.getPoints() > RCWarn.INST.config.supporterMaxWarnPoints) {
-            throw new CommandException("Supporter dürfen nur Warnungen mit max. " + RCWarn.INST.config.supporterMaxWarnPoints + " Punkten aussprechen!");
         }
 
         if(reason.getPoints() > 0) {
