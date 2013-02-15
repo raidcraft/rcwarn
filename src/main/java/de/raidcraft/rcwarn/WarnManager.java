@@ -1,5 +1,6 @@
 package de.raidcraft.rcwarn;
 
+import de.raidcraft.RaidCraft;
 import de.raidcraft.api.commands.QueuedCommand;
 import de.raidcraft.api.database.Database;
 import de.raidcraft.rcwarn.database.PointsTable;
@@ -82,6 +83,7 @@ public class WarnManager {
 
     public void warningAccept(String player) {
         Database.getTable(PointsTable.class).setAccepted(player);
+        RaidCraft.LOGGER.info("Warning accepted by player: " + player);
         if(Bukkit.getPlayer(player) != null) {
             Bukkit.getPlayer(player).sendMessage(ChatColor.YELLOW + "Warnung akzeptiert! Du kannst nun weiter spielen!");
         }
