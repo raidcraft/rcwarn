@@ -30,7 +30,7 @@ public class WarnCommand {
     }
 
     @Command(
-            aliases = {"warn", "ban"},
+            aliases = {"warn", "ban", "praise"},
             desc = "Warn command",
             flags = "fi"
     )
@@ -103,7 +103,7 @@ public class WarnCommand {
         else {
             sender.sendMessage(ChatColor.GREEN + "Du hast '" + ChatColor.YELLOW + player + ChatColor.GREEN + "' gelobt! "
                     + ChatColor.YELLOW + "(" + ChatColor.RED + reason.getName() + ChatColor.YELLOW + ")");
-            Bukkit.broadcastMessage(ChatColor.DARK_RED + player + " hat ein Lob erhalten (" + reason.getName() + ")!");
+            Bukkit.broadcastMessage(ChatColor.DARK_GREEN + player + " hat ein Lob erhalten (" + reason.getName() + ")!");
         }
 
         Location location = null;
