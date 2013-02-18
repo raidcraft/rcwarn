@@ -5,7 +5,10 @@ import de.raidcraft.rcwarn.BanManager;
 import de.raidcraft.rcwarn.WarnManager;
 import de.raidcraft.rcwarn.database.BansTable;
 import de.raidcraft.rcwarn.util.Ban;
+import de.raidcraft.rcwarn.util.Reason;
 import de.raidcraft.rcwarn.util.Warning;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -20,6 +23,14 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onAsynchPreLogin(AsyncPlayerPreLoginEvent event) {
         Ban ban = Database.getTable(BansTable.class).getBan(event.getName());
+
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(event.getName());
+        if(offlinePlayer != null && offlinePlayer.isBanned() && ban == null) {
+            WarnManager.INST.addWarning(event.getName(), "RCWarn", null, new Reason("Altban", 100, 0));
+            BanManager.INST.checkPlayer(event.getName());
+            return;
+        }
+
         // no or old ban
         if(ban == null || ban.isExpired()) {
             Database.getTable(BansTable.class).unban(event.getName());
