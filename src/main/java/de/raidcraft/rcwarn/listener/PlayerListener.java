@@ -26,7 +26,7 @@ public class PlayerListener implements Listener {
 
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(event.getName());
         if(offlinePlayer != null && offlinePlayer.isBanned() && ban == null) {
-            WarnManager.INST.addWarning(event.getName(), "RCWarn", null, new Reason("Altban", 100, 0));
+            WarnManager.INST.addWarning(event.getName(), "RCWarn", null, new Reason("Altban", 100, 0).setDetail("Der Spieler war bereits gebannt!"));
             BanManager.INST.checkPlayer(event.getName());
             return;
         }
