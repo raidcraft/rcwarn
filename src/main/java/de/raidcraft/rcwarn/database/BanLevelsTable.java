@@ -1,8 +1,9 @@
 package de.raidcraft.rcwarn.database;
 
 import com.sk89q.commandbook.CommandBook;
+import de.raidcraft.RaidCraft;
 import de.raidcraft.api.database.Table;
-import de.raidcraft.rcwarn.BanManager;
+import de.raidcraft.rcwarn.RCWarnPlugin;
 import de.raidcraft.rcwarn.util.BanLevel;
 
 import java.sql.ResultSet;
@@ -47,7 +48,7 @@ public class BanLevelsTable extends Table {
             while (resultSet.next()) {
                 banLevels.add(new BanLevel(resultSet.getInt("points"), resultSet.getLong("duration")));
             }
-            BanManager.INST.setBanLevels(banLevels);
+            RaidCraft.getComponent(RCWarnPlugin.class).getBanManager().setBanLevels(banLevels);
         } catch (SQLException e) {
             CommandBook.logger().warning(e.getMessage());
         }

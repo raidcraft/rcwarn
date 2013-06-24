@@ -4,9 +4,9 @@ import com.sk89q.minecraft.util.commands.Command;
 import com.sk89q.minecraft.util.commands.CommandContext;
 import com.sk89q.minecraft.util.commands.CommandException;
 import com.sk89q.minecraft.util.commands.CommandPermissions;
+import de.raidcraft.RaidCraft;
 import de.raidcraft.api.player.RCPlayer;
-import de.raidcraft.rcwarn.RCWarn;
-import de.raidcraft.rcwarn.WarnManager;
+import de.raidcraft.rcwarn.RCWarnPlugin;
 import de.raidcraft.rcwarn.util.Reason;
 import de.raidcraft.rcwarn.util.Warning;
 import de.raidcraft.util.DateUtil;
@@ -26,7 +26,7 @@ public class WarnCommand {
 
     private Map<String, Warning> lastWarnings = new HashMap<>();
 
-    public WarnCommand(RCWarn module) {
+    public WarnCommand(RCWarnPlugin module) {
     }
 
     @Command(
@@ -44,7 +44,7 @@ public class WarnCommand {
         //check player
         String player = context.getString(0);
         if(!context.hasFlag('i')) {
-            RCPlayer rcplayer = RCWarn.INST.getPlayer(player);
+            RCPlayer rcplayer = RaidCraft.getPlayer(player);
             if(rcplayer == null) {
                 throw new CommandException("Der angegebene Spieler ist unbekannt! Nutze -i um ihn trotzdem zu verwarnen!");
             }
@@ -53,7 +53,7 @@ public class WarnCommand {
                 if(sender instanceof Player) {
                     ((Player) sender).kickPlayer("Du hast versucht einen Mod oder Admin zu verwarnen!");
                     Bukkit.broadcastMessage(ChatColor.DARK_RED + sender.getName() + " hat versucht einen Mod/Admin zu verwarnen und wurde gekickt! Haha!");
-                    lastWarnings.put(sender.getName(), WarnManager.INST.addWarning(sender.getName(), "RCWarn", ((Player) sender).getLocation(), Reason.getReason("Putschversuch")));
+                    lastWarnings.put(sender.getName(), RaidCraft.getComponent(RCWarnPlugin.class).getWarnManager().addWarning(sender.getName(), "RCWarn", ((Player) sender).getLocation(), Reason.getReason("Putschversuch")));
                 }
                 throw new CommandException("Dieser Spieler kann nicht verwarnt werden! Mod / Admin?");
             }
@@ -63,7 +63,7 @@ public class WarnCommand {
         if(!context.hasFlag('f')) {
             Warning lastWarning = lastWarnings.get(player);
 
-            if(lastWarning != null && DateUtil.getTimeStamp(lastWarning.getDate()) + RCWarn.INST.config.warningCooldown > System.currentTimeMillis()) {
+            if(lastWarning != null && DateUtil.getTimeStamp(lastWarning.getDate()) + RaidCraft.getComponent(RCWarnPlugin.class).getConfig().warningCooldown > System.currentTimeMillis()) {
                 sender.sendMessage(ChatColor.RED + "Der Spieler hat in den letzen Minuten erst eine Verwarnung erhalten:");
                 sender.sendMessage(ChatColor.RED + "Grund: " + lastWarning.getReason().getName() + " (" + lastWarning.getReason().getDetail() + ")");
                 sender.sendMessage(ChatColor.RED + "Nutze '/warn <Spieler> <Grund> [Detail] -f' um den Spieler trotzdem zu warnen!");
@@ -110,7 +110,7 @@ public class WarnCommand {
         if(sender instanceof Player) {
             location = ((Player) sender).getLocation();
         }
-        lastWarnings.put(player, WarnManager.INST.addWarning(player, sender.getName(), location, reason));
+        lastWarnings.put(player, RaidCraft.getComponent(RCWarnPlugin.class).getWarnManager().addWarning(player, sender.getName(), location, reason));
     }
 }
 

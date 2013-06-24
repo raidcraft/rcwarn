@@ -1,7 +1,8 @@
 package de.raidcraft.rcwarn.commands;
 
 import com.sk89q.minecraft.util.commands.*;
-import de.raidcraft.rcwarn.RCWarn;
+import de.raidcraft.RaidCraft;
+import de.raidcraft.rcwarn.RCWarnPlugin;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -10,7 +11,7 @@ import org.bukkit.command.CommandSender;
  */
 public class AdminCommands {
 
-    public AdminCommands(RCWarn module) {
+    public AdminCommands(RCWarnPlugin module) {
 
     }
 
@@ -25,9 +26,9 @@ public class AdminCommands {
 
     public static class NestedAdminCommands {
 
-        private final RCWarn module;
+        private final RCWarnPlugin module;
 
-        public NestedAdminCommands(RCWarn module) {
+        public NestedAdminCommands(RCWarnPlugin module) {
 
             this.module = module;
         }
@@ -39,8 +40,7 @@ public class AdminCommands {
         @CommandPermissions("rcwarn.reload")
         public void reload(CommandContext context, CommandSender sender) throws CommandException {
 
-            RCWarn.INST.reload();
-            RCWarn.INST.load();
+            RaidCraft.getComponent(RCWarnPlugin.class).reload();
             sender.sendMessage(ChatColor.GREEN + "RCWarn wurde neu geladen!");
         }
     }

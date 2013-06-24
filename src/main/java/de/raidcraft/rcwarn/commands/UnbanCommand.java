@@ -4,10 +4,10 @@ import com.sk89q.minecraft.util.commands.Command;
 import com.sk89q.minecraft.util.commands.CommandContext;
 import com.sk89q.minecraft.util.commands.CommandException;
 import com.sk89q.minecraft.util.commands.CommandPermissions;
+import de.raidcraft.RaidCraft;
 import de.raidcraft.api.database.Database;
 import de.raidcraft.api.player.RCPlayer;
-import de.raidcraft.rcwarn.BanManager;
-import de.raidcraft.rcwarn.RCWarn;
+import de.raidcraft.rcwarn.RCWarnPlugin;
 import de.raidcraft.rcwarn.database.BansTable;
 import de.raidcraft.rcwarn.database.PointsTable;
 import de.raidcraft.rcwarn.util.Ban;
@@ -30,7 +30,7 @@ public class UnbanCommand {
 
     private Map<String, Warning> lastWarnings = new HashMap<>();
 
-    public UnbanCommand(RCWarn module) {
+    public UnbanCommand(RCWarnPlugin module) {
     }
 
     @Command(
@@ -52,7 +52,7 @@ public class UnbanCommand {
                 player = context.getString(0);
             }
             else {
-                RCPlayer rcplayer = RCWarn.INST.getPlayer(player);
+                RCPlayer rcplayer = RaidCraft.getPlayer(player);
                 if(rcplayer == null) {
                     throw new CommandException("Der angegebene Spieler ist angeblich unbekannt! Nutze -i um das zu ignorieren!");
                 }
@@ -71,7 +71,7 @@ public class UnbanCommand {
                 location = ((Player) sender).getLocation();
             }
             int points = Database.getTable(PointsTable.class).getAllPoints(player);
-            points -= BanManager.INST.getHighestBanLevel().getPoints() - 2;
+            points -= RaidCraft.getComponent(RCWarnPlugin.class).getBanManager().getHighestBanLevel().getPoints() - 2;
             Database.getTable(PointsTable.class)
                     .addPoints(
                             new Warning(player, sender.getName(),

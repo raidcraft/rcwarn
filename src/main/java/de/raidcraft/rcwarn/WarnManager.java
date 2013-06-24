@@ -4,6 +4,7 @@ import de.raidcraft.RaidCraft;
 import de.raidcraft.api.commands.QueuedCommand;
 import de.raidcraft.api.database.Database;
 import de.raidcraft.rcwarn.database.PointsTable;
+import de.raidcraft.rcwarn.multiworld.PlayerGetWarningMessage;
 import de.raidcraft.rcwarn.util.Reason;
 import de.raidcraft.rcwarn.util.Warning;
 import de.raidcraft.util.DateUtil;
@@ -21,19 +22,24 @@ import java.util.Map;
  */
 public class WarnManager {
 
-    public static final WarnManager INST = new WarnManager();
-
+    private RCWarnPlugin plugin;
     private Map<String, Warning> openWarnings = new HashMap<>();
+
+    public WarnManager(RCWarnPlugin plugin) {
+
+        this.plugin = plugin;
+    }
 
     public Warning addWarning(String player, String punisher, Location location, Reason reason) {
 
         Warning warning = new Warning(player, punisher, reason, DateUtil.getCurrentDateString(), location);
         Database.getTable(PointsTable.class).addPoints(warning);
         openWarnings.put(player, warning);
-        BanManager.INST.checkPlayer(player);
+        plugin.getBanManager().checkPlayer(player);
+        plugin.getBungeeManager().sendMessage(Bukkit.getOnlinePlayers()[0], new PlayerGetWarningMessage(player, reason.getName()));
 //        RCWarn.INST.postThreads();
         if(Bukkit.getPlayer(player) != null) {
-            WarnManager.INST.informPlayer(Bukkit.getPlayer(player), warning);
+            informPlayer(Bukkit.getPlayer(player), warning);
         }
 
         return warning;
@@ -67,7 +73,7 @@ public class WarnManager {
             player.sendMessage(ChatColor.GREEN.toString() + ChatColor.ITALIC + "Du wurdest gelobt!");
         player.sendMessage(ChatColor.YELLOW + "Grund: " + ChatColor.RED + warning.getReason().getName() + " (" + detail + ")");
         player.sendMessage(ChatColor.YELLOW + "Punkte: " + ChatColor.RED + warning.getReason().getPoints() +
-                " (Nächster Ban: " + points + "/" + BanManager.INST.getNextBanLevel(points).getPoints() + ")");
+                " (Nächster Ban: " + points + "/" + RaidCraft.getComponent(RCWarnPlugin.class).getBanManager().getNextBanLevel(points).getPoints() + ")");
         if(warning.getReason().getPoints() > -1)
             player.sendMessage(ChatColor.RED + "Gebe " + ChatColor.WHITE + "/rcconfirm" + ChatColor.RED + " ein um die Warnung zur Kenntnis zu nehmen!");
         else
@@ -78,6 +84,14 @@ public class WarnManager {
             new QueuedCommand(player, this, "warningAccept", player.getName());
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void informPlayer(Player player) {
+
+        Warning warning = getOpenWarning(player.getName());
+        if(warning != null) {
+            informPlayer(player, warning);
         }
     }
 

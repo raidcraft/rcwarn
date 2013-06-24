@@ -22,9 +22,13 @@ import java.util.TreeMap;
  */
 public class BanManager {
 
-    public static final BanManager INST = new BanManager();
-
+    private RCWarnPlugin plugin;
     private List<BanLevel> banLevels;
+
+    public BanManager(RCWarnPlugin plugin) {
+
+        this.plugin = plugin;
+    }
 
     public void setBanLevels(List<BanLevel> newBanLevels) {
         banLevels = newBanLevels;
@@ -110,18 +114,18 @@ public class BanManager {
 
     public void kickBannedPlayer(String player, Ban ban) {
         if(Bukkit.getPlayer(player) != null) {
-            String info = RCWarn.INST.config.banText.replace("%e", ban.getEmbellishedExpiration());
+            String info = plugin.getConfig().banText.replace("%e", ban.getEmbellishedExpiration());
             Bukkit.getPlayer(player).kickPlayer(info);
         }
     }
 
     public void kickBannedPlayer(AsyncPlayerPreLoginEvent event, Ban ban) {
-        String info = RCWarn.INST.config.banText.replace("%e", ban.getEmbellishedExpiration());
+        String info = plugin.getConfig().banText.replace("%e", ban.getEmbellishedExpiration());
         event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, info);
     }
 
     public void setLocalBukkitBan(String player, boolean banned) {
-        OfflinePlayer offlinePlayer = RCWarn.INST.getServer().getOfflinePlayer(player);
+        OfflinePlayer offlinePlayer = Bukkit.getServer().getOfflinePlayer(player);
         if(offlinePlayer != null) {
             offlinePlayer.setBanned(banned);
         }

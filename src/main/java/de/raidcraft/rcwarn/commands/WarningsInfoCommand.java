@@ -3,10 +3,10 @@ package de.raidcraft.rcwarn.commands;
 import com.sk89q.minecraft.util.commands.Command;
 import com.sk89q.minecraft.util.commands.CommandContext;
 import com.sk89q.minecraft.util.commands.CommandException;
+import de.raidcraft.RaidCraft;
 import de.raidcraft.api.database.Database;
 import de.raidcraft.api.player.RCPlayer;
-import de.raidcraft.rcwarn.BanManager;
-import de.raidcraft.rcwarn.RCWarn;
+import de.raidcraft.rcwarn.RCWarnPlugin;
 import de.raidcraft.rcwarn.database.PointsTable;
 import de.raidcraft.rcwarn.util.Warning;
 import de.raidcraft.util.DateUtil;
@@ -24,7 +24,7 @@ public class WarningsInfoCommand {
 
     private Map<String, Warning> lastWarnings = new HashMap<>();
 
-    public WarningsInfoCommand(RCWarn module) {
+    public WarningsInfoCommand(RCWarnPlugin module) {
     }
 
     @Command(
@@ -40,7 +40,7 @@ public class WarningsInfoCommand {
                 player = context.getString(0);
             }
             else {
-                RCPlayer rcplayer = RCWarn.INST.getPlayer(context.getString(0));
+                RCPlayer rcplayer = RaidCraft.getPlayer(context.getString(0));
                 if(rcplayer == null) {
                     throw new CommandException("Der angegebene Spieler ist angeblich unbekannt! Nutze -i um das zu ignorieren!");
                 }
@@ -52,7 +52,7 @@ public class WarningsInfoCommand {
 
         sender.sendMessage("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         sender.sendMessage(ChatColor.GREEN + "Die letzen Verwarnungen von " + player + ":");
-        sender.sendMessage(ChatColor.YELLOW + "Punkte/Nächster Ban: " + ChatColor.RED + points + "/" + BanManager.INST.getNextBanLevel(points).getPoints());
+        sender.sendMessage(ChatColor.YELLOW + "Punkte/Nächster Ban: " + ChatColor.RED + points + "/" + RaidCraft.getComponent(RCWarnPlugin.class).getBanManager().getNextBanLevel(points).getPoints());
 
         // get all warnings
         long cuttentTime = System.currentTimeMillis();

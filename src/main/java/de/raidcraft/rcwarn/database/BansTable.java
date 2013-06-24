@@ -1,8 +1,9 @@
 package de.raidcraft.rcwarn.database;
 
 import com.sk89q.commandbook.CommandBook;
+import de.raidcraft.RaidCraft;
 import de.raidcraft.api.database.Table;
-import de.raidcraft.rcwarn.BanManager;
+import de.raidcraft.rcwarn.RCWarnPlugin;
 import de.raidcraft.rcwarn.util.Ban;
 
 import java.sql.ResultSet;
@@ -52,7 +53,7 @@ public class BansTable extends Table {
                             "'" + ban.getExpiration() + "'" +
                             ");"
             ).execute();
-            BanManager.INST.setLocalBukkitBan(ban.getPlayer(), true);
+            RaidCraft.getComponent(RCWarnPlugin.class).getBanManager().setLocalBukkitBan(ban.getPlayer(), true);
         } catch (SQLException e) {
             CommandBook.logger().warning(e.getMessage());
         }
@@ -104,7 +105,7 @@ public class BansTable extends Table {
         try {
             getConnection().prepareStatement(
                     "UPDATE " + getTableName() + " SET unbanned = '1' WHERE player = '" + player + "' ORDER BY ID DESC LIMIT 1").execute();
-            BanManager.INST.setLocalBukkitBan(player, false);
+            RaidCraft.getComponent(RCWarnPlugin.class).getBanManager().setLocalBukkitBan(player, false);
         } catch (SQLException e) {
             CommandBook.logger().warning(e.getMessage());
         }

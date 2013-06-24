@@ -1,17 +1,20 @@
 package de.raidcraft.rcwarn;
 
 import com.zachsthings.libcomponents.ComponentInformation;
-import com.zachsthings.libcomponents.Depend;
+import de.raidcraft.RaidCraft;
 import de.raidcraft.api.BasePlugin;
 import de.raidcraft.api.config.ConfigurationBase;
 import de.raidcraft.api.config.Setting;
 import de.raidcraft.api.database.Database;
+import de.raidcraft.rcmultiworld.BungeeManager;
+import de.raidcraft.rcmultiworld.RCMultiWorldPlugin;
 import de.raidcraft.rcwarn.commands.*;
 import de.raidcraft.rcwarn.database.BanLevelsTable;
 import de.raidcraft.rcwarn.database.BansTable;
 import de.raidcraft.rcwarn.database.PointsTable;
 import de.raidcraft.rcwarn.database.ReasonsTable;
 import de.raidcraft.rcwarn.listener.PlayerListener;
+import de.raidcraft.rcwarn.multiworld.PlayerGetWarningMessage;
 
 import java.net.URL;
 import java.net.URLConnection;
@@ -23,16 +26,17 @@ import java.net.URLConnection;
         friendlyName = "RCWarn",
         desc = "Provides warn and ban system."
 )
-@Depend(plugins = {"RaidCraft-API"})
-public class RCWarn extends BasePlugin {
+public class RCWarnPlugin extends BasePlugin {
 
-    public LocalConfiguration config;
-    public static RCWarn INST;
+    private LocalConfiguration config;
+    private BungeeManager bungeeManager;
+    private BanManager banManager;
+    private WarnManager warnManager;
 
     @Override
     public void enable() {
-        INST = this;
-        this.config = configure(new LocalConfiguration(this));
+
+        config = configure(new LocalConfiguration(this));
 
         registerCommands(WarnCommand.class);
         registerCommands(AdminCommands.class);
@@ -46,7 +50,13 @@ public class RCWarn extends BasePlugin {
         registerTable(ReasonsTable.class, new ReasonsTable());
         registerTable(BanLevelsTable.class, new BanLevelsTable());
 
-        load();
+        bungeeManager = RaidCraft.getComponent(RCMultiWorldPlugin.class).getBungeeManager();
+        banManager = new BanManager(this);
+        warnManager = new WarnManager(this);
+
+        bungeeManager.registerBungeeMessage(PlayerGetWarningMessage.class);
+
+        reload();
     }
 
     @Override
@@ -54,20 +64,22 @@ public class RCWarn extends BasePlugin {
 
     }
 
-    public void load() {
-        Database.getTable(ReasonsTable.class).addAllReasons();
-        Database.getTable(BanLevelsTable.class).setBanLevels();
-        WarnManager.INST.setOpenWarnings(Database.getTable(PointsTable.class).getOpenWarnings());
+    @Override
+    public void reload() {
+        config.reload();
+        RaidCraft.getTable(ReasonsTable.class).addAllReasons();
+        RaidCraft.getTable(BanLevelsTable.class).setBanLevels();
+        warnManager.setOpenWarnings(Database.getTable(PointsTable.class).getOpenWarnings());
     }
 
-    public static class LocalConfiguration extends ConfigurationBase<RCWarn> {
+    public static class LocalConfiguration extends ConfigurationBase<RCWarnPlugin> {
 
         @Setting("ban-text") public String banText = "Du wurdest %e gebannt! Informiere Dich im Forum! (forum.raid-craft.de)";
         @Setting("warning-cooldown") public int warningCooldown = 180;
         @Setting("supporter-max-warn-points") public int supporterMaxWarnPoints = 2;
         @Setting("postbot-url") public String postbotURL = "http://apps.srvweb/woltlab_postbot/scripts/rcwarn/rcwarn.php";
 
-        public LocalConfiguration(RCWarn plugin) {
+        public LocalConfiguration(RCWarnPlugin plugin) {
 
             super(plugin, "config.yml");
         }
@@ -82,5 +94,25 @@ public class RCWarn extends BasePlugin {
         catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public LocalConfiguration getConfig() {
+
+        return config;
+    }
+
+    public BungeeManager getBungeeManager() {
+
+        return bungeeManager;
+    }
+
+    public BanManager getBanManager() {
+
+        return banManager;
+    }
+
+    public WarnManager getWarnManager() {
+
+        return warnManager;
     }
 }

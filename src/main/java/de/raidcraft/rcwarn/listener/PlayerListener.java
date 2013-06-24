@@ -1,8 +1,8 @@
 package de.raidcraft.rcwarn.listener;
 
+import de.raidcraft.RaidCraft;
 import de.raidcraft.api.database.Database;
-import de.raidcraft.rcwarn.BanManager;
-import de.raidcraft.rcwarn.WarnManager;
+import de.raidcraft.rcwarn.RCWarnPlugin;
 import de.raidcraft.rcwarn.database.BansTable;
 import de.raidcraft.rcwarn.util.Ban;
 import de.raidcraft.rcwarn.util.Reason;
@@ -20,34 +20,38 @@ import org.bukkit.event.player.PlayerInteractEvent;
  */
 public class PlayerListener implements Listener {
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onAsynchPreLogin(AsyncPlayerPreLoginEvent event) {
-        Ban ban = Database.getTable(BansTable.class).getBan(event.getName());
+
+        RCWarnPlugin plugin = RaidCraft.getComponent(RCWarnPlugin.class);
+        Ban ban = RaidCraft.getTable(BansTable.class).getBan(event.getName());
 
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(event.getName());
         if(offlinePlayer != null && offlinePlayer.isBanned() && ban == null) {
-            WarnManager.INST.addWarning(event.getName(), "RCWarn", null, new Reason("Altban", 100, 0).setDetail("Der Spieler war bereits gebannt!"));
-            BanManager.INST.checkPlayer(event.getName());
+            plugin.getWarnManager().addWarning(event.getName(), "RCWarn", null, new Reason("Altban", 100, 0).setDetail("Der Spieler war bereits gebannt!"));
+            plugin.getBanManager().checkPlayer(event.getName());
             return;
         }
 
         // no or old ban
         if(ban == null || ban.isExpired()) {
             Database.getTable(BansTable.class).unban(event.getName());
-            BanManager.INST.checkPlayer(event.getName());
+            plugin.getBanManager().checkPlayer(event.getName());
             return;
         }
-        BanManager.INST.kickBannedPlayer(event, ban);
+        plugin.getBanManager().kickBannedPlayer(event, ban);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onInteract(PlayerInteractEvent event) {
-        Warning warning = WarnManager.INST.getOpenWarning(event.getPlayer().getName());
+
+        RCWarnPlugin plugin = RaidCraft.getComponent(RCWarnPlugin.class);
+        Warning warning = plugin.getWarnManager().getOpenWarning(event.getPlayer().getName());
         if(warning == null) {
             return;
         }
 
         event.setCancelled(true);
-        WarnManager.INST.informPlayer(event.getPlayer(), warning);
+        plugin.getWarnManager().informPlayer(event.getPlayer(), warning);
     }
 }
