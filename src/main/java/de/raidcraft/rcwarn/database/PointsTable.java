@@ -1,8 +1,9 @@
 package de.raidcraft.rcwarn.database;
 
 import com.sk89q.commandbook.CommandBook;
+import de.raidcraft.RaidCraft;
 import de.raidcraft.api.database.Table;
-import de.raidcraft.rcwarn.WarnManager;
+import de.raidcraft.rcwarn.RCWarnPlugin;
 import de.raidcraft.rcwarn.util.Reason;
 import de.raidcraft.rcwarn.util.Warning;
 import de.raidcraft.util.DateUtil;
@@ -171,7 +172,7 @@ public class PointsTable extends Table {
         try {
             getConnection().prepareStatement(
                     "UPDATE " + getTableName() + " SET accepted = '1' WHERE player = '" + player + "'").execute();
-            WarnManager.INST.setOpenWarnings(getOpenWarnings());
+            RaidCraft.getComponent(RCWarnPlugin.class).getWarnManager().setOpenWarnings(getOpenWarnings());
         } catch (SQLException e) {
             CommandBook.logger().warning(e.getMessage());
         }
