@@ -24,12 +24,11 @@
     <version>1.1.5-SNAPSHOT</version>
     <name>RCWarn</name>
 
-    <scm>
-        <connection>scm:git:ssh://git@srvdev2.raid-craft.de:22109/${project.artifactId}.git</connection>
-        <developerConnection>scm:git:ssh://git@srvdev2.raid-craft.de:22109/${project.artifactId}.git</developerConnection>
-        <url>http://git.raid-craft.de/${project.artifactId}</url>
-        <tag>HEAD</tag>
-    </scm>
+    <parent>
+        <groupId>de.raidcraft</groupId>
+        <artifactId>masterpom</artifactId>
+        <version>RELEASE</version>
+    </parent>
 
     <repositories>
         <repository>
@@ -37,12 +36,6 @@
             <url>http://nexus.raid-craft.de/content/groups/public/</url>
         </repository>
     </repositories>
-
-    <parent>
-        <groupId>de.raidcraft</groupId>
-        <artifactId>masterpom</artifactId>
-        <version>LATEST</version>
-    </parent>
 
     <dependencies>
         <dependency>
