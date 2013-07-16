@@ -45,12 +45,12 @@
         <dependency>
             <groupId>de.raidcraft</groupId>
             <artifactId>raidcraft-api</artifactId>
-            <version>LATEST</version>
+            <version>${rc.version}</version>
         </dependency>
         <dependency>
             <groupId>de.raidcraft</groupId>
             <artifactId>rcmultiworld</artifactId>
-            <version>LATEST</version>
+            <version>${rc.version}</version>
         </dependency>
     </dependencies>
 </project>
