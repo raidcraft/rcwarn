@@ -60,7 +60,7 @@ public class BansTable extends Table {
     }
 
     public Ban getBan(String player) {
-        return getLastBan(player, false);
+        return getLastBan(player);
     }
 
     public List<Ban> getBans(String player) {
@@ -80,14 +80,7 @@ public class BansTable extends Table {
     }
 
     public Ban getLastBan(String player) {
-        return getLastBan(player, true);
-    }
-
-    public Ban getLastBan(String player, boolean alsoUnbanned) {
         String unbannedFilter = "";
-        if(!alsoUnbanned) {
-            unbannedFilter = "AND unbanned='0'";
-        }
         try {
             ResultSet resultSet = getConnection().prepareStatement(
                     "SELECT * FROM " + getTableName() + " WHERE player='" + player + "' " + unbannedFilter + " ORDER BY id DESC").executeQuery();
