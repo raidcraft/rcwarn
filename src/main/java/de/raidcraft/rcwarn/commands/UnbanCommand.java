@@ -6,7 +6,6 @@ import com.sk89q.minecraft.util.commands.CommandException;
 import com.sk89q.minecraft.util.commands.CommandPermissions;
 import de.raidcraft.RaidCraft;
 import de.raidcraft.api.database.Database;
-import de.raidcraft.api.player.RCPlayer;
 import de.raidcraft.rcwarn.RCWarnPlugin;
 import de.raidcraft.rcwarn.database.BansTable;
 import de.raidcraft.rcwarn.database.PointsTable;
@@ -52,11 +51,11 @@ public class UnbanCommand {
                 player = context.getString(0);
             }
             else {
-                RCPlayer rcplayer = RaidCraft.getPlayer(player);
-                if(rcplayer == null) {
+                Player onlinePlayer = Bukkit.getPlayer(context.getString(0));
+                if(onlinePlayer == null) {
                     throw new CommandException("Der angegebene Spieler ist angeblich unbekannt! Nutze -i um das zu ignorieren!");
                 }
-                player = rcplayer.getDisplayName();
+                player = onlinePlayer.getName();
             }
         }
 

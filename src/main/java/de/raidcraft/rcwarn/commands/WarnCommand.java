@@ -5,7 +5,6 @@ import com.sk89q.minecraft.util.commands.CommandContext;
 import com.sk89q.minecraft.util.commands.CommandException;
 import com.sk89q.minecraft.util.commands.CommandPermissions;
 import de.raidcraft.RaidCraft;
-import de.raidcraft.api.player.RCPlayer;
 import de.raidcraft.rcwarn.RCWarnPlugin;
 import de.raidcraft.rcwarn.util.Reason;
 import de.raidcraft.rcwarn.util.Warning;
@@ -44,11 +43,11 @@ public class WarnCommand {
         //check player
         String player = context.getString(0);
         if(!context.hasFlag('i')) {
-            RCPlayer rcplayer = RaidCraft.getPlayer(player);
-            if(rcplayer == null) {
-                throw new CommandException("Der angegebene Spieler ist unbekannt! Nutze -i um ihn trotzdem zu verwarnen!");
+            Player onlinePlayer = Bukkit.getPlayer(context.getString(0));
+            if(onlinePlayer == null) {
+                throw new CommandException("Der angegebene Spieler ist angeblich unbekannt! Nutze -i um das zu ignorieren!");
             }
-            if(rcplayer.hasPermission("rcwarn.ignore")) {
+            if(onlinePlayer.hasPermission("rcwarn.ignore")) {
 
                 if(sender instanceof Player) {
                     ((Player) sender).kickPlayer("Du hast versucht einen Mod oder Admin zu verwarnen!");
@@ -57,7 +56,7 @@ public class WarnCommand {
                 }
                 throw new CommandException("Dieser Spieler kann nicht verwarnt werden! Mod / Admin?");
             }
-            player = rcplayer.getDisplayName();
+            player = onlinePlayer.getName();
         }
 
         if(!context.hasFlag('f')) {

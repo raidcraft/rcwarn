@@ -5,13 +5,14 @@ import com.sk89q.minecraft.util.commands.CommandContext;
 import com.sk89q.minecraft.util.commands.CommandException;
 import de.raidcraft.RaidCraft;
 import de.raidcraft.api.database.Database;
-import de.raidcraft.api.player.RCPlayer;
 import de.raidcraft.rcwarn.RCWarnPlugin;
 import de.raidcraft.rcwarn.database.PointsTable;
 import de.raidcraft.rcwarn.util.Warning;
 import de.raidcraft.util.DateUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.*;
 
@@ -40,11 +41,11 @@ public class WarningsInfoCommand {
                 player = context.getString(0);
             }
             else {
-                RCPlayer rcplayer = RaidCraft.getPlayer(context.getString(0));
-                if(rcplayer == null) {
+                Player onlinePlayer = Bukkit.getPlayer(context.getString(0));
+                if(onlinePlayer == null) {
                     throw new CommandException("Der angegebene Spieler ist angeblich unbekannt! Nutze -i um das zu ignorieren!");
                 }
-                player = rcplayer.getDisplayName();
+                player = onlinePlayer.getName();
             }
         }
 
@@ -55,7 +56,7 @@ public class WarningsInfoCommand {
         sender.sendMessage(ChatColor.YELLOW + "Punkte/Nächster Ban: " + ChatColor.RED + points + "/" + RaidCraft.getComponent(RCWarnPlugin.class).getBanManager().getNextBanLevel(points).getPoints());
 
         // get all warnings
-        long cuttentTime = System.currentTimeMillis();
+        long currentTime = System.currentTimeMillis();
         List<Warning> allWarnings = Database.getTable(PointsTable.class).getAllWarnings(player);
 
         if(allWarnings.size() == 0) {
@@ -65,7 +66,7 @@ public class WarningsInfoCommand {
             // sort warnings
             SortedMap<Long, Warning> orderedWarnings = new TreeMap<>();
             for(Warning warning : allWarnings) {
-                orderedWarnings.put(cuttentTime - DateUtil.getTimeStamp(warning.getDate()), warning);
+                orderedWarnings.put(currentTime - DateUtil.getTimeStamp(warning.getDate()), warning);
             }
 
             int i = 0;
