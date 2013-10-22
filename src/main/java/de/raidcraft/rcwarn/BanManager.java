@@ -37,7 +37,7 @@ public class BanManager {
     public BanLevel getNextBanLevel(int points) {
         BanLevel nextBanLevel = null;
         for(BanLevel banLevel : banLevels) {
-            if(banLevel.getPoints() < points) {
+            if(banLevel.getPoints() < points && nextBanLevel != null) {
                 continue;
             }
             if(nextBanLevel == null || nextBanLevel.getPoints() > banLevel.getPoints()) {
