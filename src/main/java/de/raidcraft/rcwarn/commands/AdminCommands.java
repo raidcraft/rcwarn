@@ -1,7 +1,6 @@
 package de.raidcraft.rcwarn.commands;
 
 import com.sk89q.minecraft.util.commands.*;
-import de.raidcraft.RaidCraft;
 import de.raidcraft.rcwarn.RCWarnPlugin;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -26,11 +25,11 @@ public class AdminCommands {
 
     public static class NestedAdminCommands {
 
-        private final RCWarnPlugin module;
+        private final RCWarnPlugin plugin;
 
-        public NestedAdminCommands(RCWarnPlugin module) {
+        public NestedAdminCommands(RCWarnPlugin plugin) {
 
-            this.module = module;
+            this.plugin = plugin;
         }
 
         @Command(
@@ -40,8 +39,21 @@ public class AdminCommands {
         @CommandPermissions("rcwarn.reload")
         public void reload(CommandContext context, CommandSender sender) throws CommandException {
 
-            RaidCraft.getComponent(RCWarnPlugin.class).reload();
+            plugin.reload();
             sender.sendMessage(ChatColor.GREEN + "RCWarn wurde neu geladen!");
+        }
+
+        @Command(
+                aliases = {"check"},
+                desc = "Checks player if he should be banned",
+                min = 1,
+                usage = "<Player>"
+        )
+        @CommandPermissions("rcwarn.reload")
+        public void check(CommandContext context, CommandSender sender) throws CommandException {
+
+            plugin.getBanManager().checkPlayer(context.getString(0));
+            sender.sendMessage(ChatColor.GREEN + "Der Spieler " + context.getString(0) + " wurde überprüft!");
         }
     }
 }
