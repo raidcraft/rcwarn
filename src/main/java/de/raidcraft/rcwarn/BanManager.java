@@ -59,19 +59,20 @@ public class BanManager {
 
     public void checkPlayer(String player) {
 
-        BanLevel preBanLevel = null;
         int playerPoints = Database.getTable(PointsTable.class).getAllPoints(player);
+        BanLevel nextBanLevel = null;
+        // get highest reached ban level
         for(BanLevel banLevel : banLevels) {
             if(banLevel.getPoints() > playerPoints) {
                 continue;
             }
-            if(preBanLevel == null || preBanLevel.getPoints() < banLevel.getPoints()) {
-                preBanLevel = banLevel;
+            if(nextBanLevel == null || nextBanLevel.getPoints() < banLevel.getPoints()) {
+                nextBanLevel = banLevel;
             }
         }
 
-        // no ban level reached
-        if(preBanLevel == null) {
+        // if player hasn't reached any level
+        if(nextBanLevel == null) {
             return;
         }
 
@@ -80,7 +81,7 @@ public class BanManager {
          */
         Ban lastBan = Database.getTable(BansTable.class).getLastBan(player);                        // get last ban
         List<Warning> allWarnings = Database.getTable(PointsTable.class).getAllWarnings(player);    // get all warnings
-        // sort warnings
+        // sort all not expired warnings
         SortedMap<Long, Warning> orderedWarnings = new TreeMap<>();
         for(Warning warning : allWarnings) {
             if(warning.isExpired()) continue;
@@ -94,7 +95,7 @@ public class BanManager {
             Long date = entry.getKey();
             Warning warning = entry.getValue();
             totalPoints += warning.getReason().getPoints();
-            if(lastBan == null || (date > DateUtil.getTimeStamp(lastBan.getDate()) && totalPoints < preBanLevel.getPoints())) {
+            if(lastBan == null || (date > DateUtil.getTimeStamp(lastBan.getDate()) && totalPoints < nextBanLevel.getPoints())) {
                 wasBelow = true;
                 break;
             }
@@ -104,7 +105,7 @@ public class BanManager {
         }
 
         // ban player
-        String expiration = preBanLevel.getExpirationFromNow();
+        String expiration = nextBanLevel.getExpirationFromNow();
         Ban newBan = new Ban(player, playerPoints, DateUtil.getCurrentDateString(), expiration);
         Database.getTable(PointsTable.class).setAccepted(player);
         Database.getTable(PointsTable.class).setPermanent(player);
