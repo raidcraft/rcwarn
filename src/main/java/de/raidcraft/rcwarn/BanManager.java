@@ -65,7 +65,9 @@ public class BanManager {
             if(banLevel.getPoints() > playerPoints) {
                 continue;
             }
-            preBanLevel = banLevel;
+            if(preBanLevel == null || preBanLevel.getPoints() < banLevel.getPoints()) {
+                preBanLevel = banLevel;
+            }
         }
 
         // no ban level reached
