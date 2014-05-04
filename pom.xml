@@ -21,12 +21,13 @@
     <groupId>de.raidcraft</groupId>
     <artifactId>rcwarn</artifactId>
     <packaging>jar</packaging>
-    <version>1.1.5-SNAPSHOT</version>
+    <version>1.1.5</version>
     <name>RCWarn</name>
 
     <scm>
         <developerConnection>scm:git:ssh://git@git.raid-craft.de:22109/raid-craft-de/rcwarn.git</developerConnection>
-    </scm>
+      <tag>rcwarn-1.1.5</tag>
+  </scm>
 
     <parent>
         <groupId>de.raidcraft</groupId>
