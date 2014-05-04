@@ -25,7 +25,7 @@
     <name>RCWarn</name>
 
     <scm>
-        <developerConnection>scm:git:ssh://git@git.raid-craft.de:22109/rcwarn.git</developerConnection>
+        <developerConnection>scm:git:ssh://git@git.raid-craft.de:22109/raid-craft-de/rcwarn.git</developerConnection>
     </scm>
 
     <parent>
