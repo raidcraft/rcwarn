@@ -4,7 +4,6 @@ import de.raidcraft.RaidCraft;
 import de.raidcraft.api.commands.QueuedCommand;
 import de.raidcraft.api.database.Database;
 import de.raidcraft.rcwarn.database.PointsTable;
-import de.raidcraft.rcwarn.multiworld.PlayerGetWarningMessage;
 import de.raidcraft.rcwarn.util.Reason;
 import de.raidcraft.rcwarn.util.Warning;
 import de.raidcraft.util.DateUtil;
@@ -36,7 +35,8 @@ public class WarnManager {
         Database.getTable(PointsTable.class).addPoints(warning);
         openWarnings.put(player, warning);
         plugin.getBanManager().checkPlayer(player);
-        plugin.getBungeeManager().sendMessage(Bukkit.getOnlinePlayers()[0], new PlayerGetWarningMessage(player, reason.getName()));
+        // TODO: sense?
+//        plugin.getBungeeManager().sendMessage(Bukkit.getOnlinePlayers()[0], new PlayerGetWarningMessage(player, reason.getName()));
 //        RCWarn.INST.postThreads();
         if(Bukkit.getPlayer(player) != null) {
             informPlayer(Bukkit.getPlayer(player), warning);
