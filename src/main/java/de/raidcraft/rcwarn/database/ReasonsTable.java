@@ -1,7 +1,8 @@
 package de.raidcraft.rcwarn.database;
 
-import com.sk89q.commandbook.CommandBook;
+import de.raidcraft.RaidCraft;
 import de.raidcraft.api.database.Table;
+import de.raidcraft.rcwarn.RCWarnPlugin;
 import de.raidcraft.rcwarn.util.Reason;
 
 import java.sql.ResultSet;
@@ -32,7 +33,7 @@ public class ReasonsTable extends Table {
                             "PRIMARY KEY ( `id` )\n" +
                             ")").execute();
         } catch (SQLException e) {
-            CommandBook.logger().severe(e.getMessage());
+            RaidCraft.getComponent(RCWarnPlugin.class).severe(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -46,15 +47,15 @@ public class ReasonsTable extends Table {
             while (resultSet.next()) {
                 Reason reason = new Reason(resultSet.getString("name"), resultSet.getInt("points"), resultSet.getLong("duration"));
                 String[] aliases = resultSet.getString("aliases").split(",");
-                if(aliases != null) {
-                    for(String alias : aliases) {
+                if (aliases != null) {
+                    for (String alias : aliases) {
                         reason.addAlias(alias);
                     }
                 }
                 Reason.addReason(reason);
             }
         } catch (SQLException e) {
-            CommandBook.logger().warning(e.getMessage());
+            RaidCraft.getComponent(RCWarnPlugin.class).warning(e.getMessage());
         }
     }
 

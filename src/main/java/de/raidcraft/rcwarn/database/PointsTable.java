@@ -1,6 +1,5 @@
 package de.raidcraft.rcwarn.database;
 
-import com.sk89q.commandbook.CommandBook;
 import de.raidcraft.RaidCraft;
 import de.raidcraft.api.database.Table;
 import de.raidcraft.rcwarn.RCWarnPlugin;
@@ -49,7 +48,7 @@ public class PointsTable extends Table {
                             "PRIMARY KEY ( `id` )\n" +
                             ")").execute();
         } catch (SQLException e) {
-            CommandBook.logger().severe(e.getMessage());
+            RaidCraft.getComponent(RCWarnPlugin.class).severe(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -61,7 +60,7 @@ public class PointsTable extends Table {
             int y = 0;
             int z = 0;
 
-            if(warning.getLocation() != null) {
+            if (warning.getLocation() != null) {
                 worldName = warning.getLocation().getWorld().getName();
                 x = warning.getLocation().getBlockX();
                 y = warning.getLocation().getBlockY();
@@ -84,7 +83,7 @@ public class PointsTable extends Table {
                             ");"
             ).execute();
         } catch (SQLException e) {
-            CommandBook.logger().warning(e.getMessage());
+            RaidCraft.getComponent(RCWarnPlugin.class).warning(e.getMessage());
         }
     }
 
@@ -99,7 +98,7 @@ public class PointsTable extends Table {
                 points += resultSet.getInt("amount");
             }
         } catch (SQLException e) {
-            CommandBook.logger().warning(e.getMessage());
+            RaidCraft.getComponent(RCWarnPlugin.class).warning(e.getMessage());
         }
 
         return points;
@@ -117,7 +116,7 @@ public class PointsTable extends Table {
                 warnings.add(warning);
             }
         } catch (SQLException e) {
-            CommandBook.logger().warning(e.getMessage());
+            RaidCraft.getComponent(RCWarnPlugin.class).warning(e.getMessage());
         }
         return warnings;
     }
@@ -134,7 +133,7 @@ public class PointsTable extends Table {
                 warnings.add(warning);
             }
         } catch (SQLException e) {
-            CommandBook.logger().warning(e.getMessage());
+            RaidCraft.getComponent(RCWarnPlugin.class).warning(e.getMessage());
         }
         return warnings;
     }
@@ -149,20 +148,20 @@ public class PointsTable extends Table {
                 return getWarningByResultSet(resultSet);
             }
         } catch (SQLException e) {
-            CommandBook.logger().warning(e.getMessage());
+            RaidCraft.getComponent(RCWarnPlugin.class).warning(e.getMessage());
         }
         return null;
     }
 
     public void checkPointsExpiration(String player) {
         List<Warning> warnings = getAllWarnings(player);
-        for(Warning warning : warnings) {
+        for (Warning warning : warnings) {
             // warning expired
-            if(warning.getReason().getDuration() <= 0) {
+            if (warning.getReason().getDuration() <= 0) {
                 continue;
             }
 
-            if(DateUtil.getTimeStamp(warning.getDate()) + warning.getReason().getDuration()*60*1000 < System.currentTimeMillis()) {
+            if (DateUtil.getTimeStamp(warning.getDate()) + warning.getReason().getDuration() * 60 * 1000 < System.currentTimeMillis()) {
                 setExpired(warning);
             }
         }
@@ -174,16 +173,16 @@ public class PointsTable extends Table {
                     "UPDATE " + getTableName() + " SET accepted = '1' WHERE player = '" + player + "'").execute();
             RaidCraft.getComponent(RCWarnPlugin.class).getWarnManager().setOpenWarnings(getOpenWarnings());
         } catch (SQLException e) {
-            CommandBook.logger().warning(e.getMessage());
+            RaidCraft.getComponent(RCWarnPlugin.class).warning(e.getMessage());
         }
     }
 
     public void setExpired(Warning warning) {
         try {
             getConnection().prepareStatement(
-                    "UPDATE " + getTableName() + " SET expired = '1' WHERE player = '" + warning.getPlayer() + "' AND date = '" +  warning.getDate() + "'").execute();
+                    "UPDATE " + getTableName() + " SET expired = '1' WHERE player = '" + warning.getPlayer() + "' AND date = '" + warning.getDate() + "'").execute();
         } catch (SQLException e) {
-            CommandBook.logger().warning(e.getMessage());
+            RaidCraft.getComponent(RCWarnPlugin.class).warning(e.getMessage());
         }
     }
 
@@ -192,7 +191,7 @@ public class PointsTable extends Table {
             getConnection().prepareStatement(
                     "UPDATE " + getTableName() + " SET permanent='1' WHERE player = '" + player + "'").execute();
         } catch (SQLException e) {
-            CommandBook.logger().warning(e.getMessage());
+            RaidCraft.getComponent(RCWarnPlugin.class).warning(e.getMessage());
         }
     }
 
@@ -200,7 +199,7 @@ public class PointsTable extends Table {
         Reason reason = new Reason(resultSet.getString("reason"), resultSet.getInt("amount"), 0);
         reason.setDetail(resultSet.getString("detail"));
         Location location = null;
-        if(Bukkit.getWorld(resultSet.getString("world")) != null) {
+        if (Bukkit.getWorld(resultSet.getString("world")) != null) {
             location = new Location(Bukkit.getWorld(resultSet.getString("world")), resultSet.getInt("x"), resultSet.getInt("y"), resultSet.getInt("z"));
         }
         Warning warning = new Warning(

@@ -1,6 +1,5 @@
 package de.raidcraft.rcwarn.database;
 
-import com.sk89q.commandbook.CommandBook;
 import de.raidcraft.RaidCraft;
 import de.raidcraft.api.database.Table;
 import de.raidcraft.rcwarn.RCWarnPlugin;
@@ -33,7 +32,7 @@ public class BanLevelsTable extends Table {
                             "PRIMARY KEY ( `id` )\n" +
                             ")").execute();
         } catch (SQLException e) {
-            CommandBook.logger().severe(e.getMessage());
+            RaidCraft.getComponent(RCWarnPlugin.class).severe(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -50,7 +49,7 @@ public class BanLevelsTable extends Table {
             }
             RaidCraft.getComponent(RCWarnPlugin.class).getBanManager().setBanLevels(banLevels);
         } catch (SQLException e) {
-            CommandBook.logger().warning(e.getMessage());
+            RaidCraft.getComponent(RCWarnPlugin.class).warning(e.getMessage());
         }
     }
 }

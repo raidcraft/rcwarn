@@ -1,6 +1,5 @@
 package de.raidcraft.rcwarn;
 
-import com.zachsthings.libcomponents.ComponentInformation;
 import de.raidcraft.RaidCraft;
 import de.raidcraft.api.BasePlugin;
 import de.raidcraft.api.config.ConfigurationBase;
@@ -8,7 +7,11 @@ import de.raidcraft.api.config.Setting;
 import de.raidcraft.api.database.Database;
 import de.raidcraft.rcmultiworld.BungeeManager;
 import de.raidcraft.rcmultiworld.RCMultiWorldPlugin;
-import de.raidcraft.rcwarn.commands.*;
+import de.raidcraft.rcwarn.commands.AdminCommands;
+import de.raidcraft.rcwarn.commands.BansInfoCommand;
+import de.raidcraft.rcwarn.commands.UnbanCommand;
+import de.raidcraft.rcwarn.commands.WarnCommand;
+import de.raidcraft.rcwarn.commands.WarningsInfoCommand;
 import de.raidcraft.rcwarn.database.BanLevelsTable;
 import de.raidcraft.rcwarn.database.BansTable;
 import de.raidcraft.rcwarn.database.PointsTable;
@@ -19,10 +22,10 @@ import de.raidcraft.rcwarn.multiworld.PlayerGetWarningMessage;
 /**
  * @author Philip
  */
-@ComponentInformation(
-        friendlyName = "RCWarn",
-        desc = "Provides warn and ban system."
-)
+//@ComponentInformation(
+//        friendlyName = "RCWarn",
+//        desc = "Provides warn and ban system."
+//)
 public class RCWarnPlugin extends BasePlugin {
 
     private LocalConfiguration config;
@@ -71,10 +74,14 @@ public class RCWarnPlugin extends BasePlugin {
 
     public static class LocalConfiguration extends ConfigurationBase<RCWarnPlugin> {
 
-        @Setting("ban-text") public String banText = "Du wurdest %e gebannt! Informiere Dich im Forum! (forum.raid-craft.de)";
-        @Setting("warning-cooldown") public int warningCooldown = 180;
-        @Setting("supporter-max-warn-points") public int supporterMaxWarnPoints = 2;
-        @Setting("postbot-url") public String postbotURL = "http://apps.srvweb/woltlab_postbot/scripts/rcwarn/rcwarn.php";
+        @Setting("ban-text")
+        public String banText = "Du wurdest %e gebannt! Informiere Dich im Forum! (forum.raid-craft.de)";
+        @Setting("warning-cooldown")
+        public int warningCooldown = 180;
+        @Setting("supporter-max-warn-points")
+        public int supporterMaxWarnPoints = 2;
+        @Setting("postbot-url")
+        public String postbotURL = "http://apps.srvweb/woltlab_postbot/scripts/rcwarn/rcwarn.php";
 
         public LocalConfiguration(RCWarnPlugin plugin) {
 

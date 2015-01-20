@@ -1,6 +1,5 @@
 package de.raidcraft.rcwarn.database;
 
-import com.sk89q.commandbook.CommandBook;
 import de.raidcraft.RaidCraft;
 import de.raidcraft.api.database.Table;
 import de.raidcraft.rcwarn.RCWarnPlugin;
@@ -37,7 +36,7 @@ public class BansTable extends Table {
                             "PRIMARY KEY ( `id` )\n" +
                             ")").execute();
         } catch (SQLException e) {
-            CommandBook.logger().severe(e.getMessage());
+            RaidCraft.getComponent(RCWarnPlugin.class).severe(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -55,7 +54,7 @@ public class BansTable extends Table {
             ).execute();
             RaidCraft.getComponent(RCWarnPlugin.class).getBanManager().setLocalBukkitBan(ban.getPlayer(), true);
         } catch (SQLException e) {
-            CommandBook.logger().warning(e.getMessage());
+            RaidCraft.getComponent(RCWarnPlugin.class).warning(e.getMessage());
         }
     }
 
@@ -74,7 +73,7 @@ public class BansTable extends Table {
                 bans.add(ban);
             }
         } catch (SQLException e) {
-            CommandBook.logger().warning(e.getMessage());
+            RaidCraft.getComponent(RCWarnPlugin.class).warning(e.getMessage());
         }
         return bans;
     }
@@ -89,7 +88,7 @@ public class BansTable extends Table {
                 return new Ban(resultSet.getString("player"), resultSet.getInt("points"), resultSet.getString("date"), resultSet.getString("expiration"), resultSet.getBoolean("unbanned"));
             }
         } catch (SQLException e) {
-            CommandBook.logger().warning(e.getMessage());
+            RaidCraft.getComponent(RCWarnPlugin.class).warning(e.getMessage());
         }
         return null;
     }
@@ -100,7 +99,7 @@ public class BansTable extends Table {
                     "UPDATE " + getTableName() + " SET unbanned = '1' WHERE player = '" + player + "' ORDER BY ID DESC LIMIT 1").execute();
             RaidCraft.getComponent(RCWarnPlugin.class).getBanManager().setLocalBukkitBan(player, false);
         } catch (SQLException e) {
-            CommandBook.logger().warning(e.getMessage());
+            RaidCraft.getComponent(RCWarnPlugin.class).warning(e.getMessage());
         }
     }
 }
