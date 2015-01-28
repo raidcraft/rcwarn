@@ -4,6 +4,7 @@ import de.raidcraft.RaidCraft;
 import de.raidcraft.api.commands.QueuedCommand;
 import de.raidcraft.api.database.Database;
 import de.raidcraft.rcwarn.database.PointsTable;
+import de.raidcraft.rcwarn.multiworld.PlayerGetWarningMessage;
 import de.raidcraft.rcwarn.util.Reason;
 import de.raidcraft.rcwarn.util.Warning;
 import de.raidcraft.util.DateUtil;
@@ -35,10 +36,10 @@ public class WarnManager {
         Database.getTable(PointsTable.class).addPoints(warning);
         openWarnings.put(player, warning);
         plugin.getBanManager().checkPlayer(player);
-        // TODO: sense?
-//        plugin.getBungeeManager().sendMessage(Bukkit.getOnlinePlayers()[0], new PlayerGetWarningMessage(player, reason.getName()));
-//        RCWarn.INST.postThreads();
-        if(Bukkit.getPlayer(player) != null) {
+        // send warning to all servers
+        plugin.getBungeeManager().sendMessage(Bukkit.getOnlinePlayers()[0], new PlayerGetWarningMessage(player, reason.getName()));
+        //        RCWarn.INST.postThreads();
+        if (Bukkit.getPlayer(player) != null) {
             informPlayer(Bukkit.getPlayer(player), warning);
         }
 
@@ -47,7 +48,7 @@ public class WarnManager {
 
     public void setOpenWarnings(List<Warning> warnings) {
         openWarnings.clear();
-        for(Warning warning : warnings) {
+        for (Warning warning : warnings) {
             openWarnings.put(warning.getPlayer(), warning);
         }
     }
@@ -62,22 +63,24 @@ public class WarnManager {
 
     public void informPlayer(Player player, Warning warning) {
         String detail = "keine Details";
-        if(warning.getReason().getDetail() != null && warning.getReason().getDetail().length() > 0) {
+        if (warning.getReason().getDetail() != null && warning.getReason().getDetail().length() > 0) {
             detail = warning.getReason().getDetail();
         }
         int points = Database.getTable(PointsTable.class).getAllPoints(player.getName());
         player.sendMessage(ChatColor.YELLOW + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        if(warning.getReason().getPoints() > -1)
+        if (warning.getReason().getPoints() > -1) {
             player.sendMessage(ChatColor.RED.toString() + ChatColor.ITALIC + "Du wurdest verwarnt!");
-        else
+        } else {
             player.sendMessage(ChatColor.GREEN.toString() + ChatColor.ITALIC + "Du wurdest gelobt!");
+        }
         player.sendMessage(ChatColor.YELLOW + "Grund: " + ChatColor.RED + warning.getReason().getName() + " (" + detail + ")");
         player.sendMessage(ChatColor.YELLOW + "Punkte: " + ChatColor.RED + warning.getReason().getPoints() +
                 " (Nächster Ban: " + points + "/" + RaidCraft.getComponent(RCWarnPlugin.class).getBanManager().getNextBanLevel(points).getPoints() + ")");
-        if(warning.getReason().getPoints() > -1)
+        if (warning.getReason().getPoints() > -1) {
             player.sendMessage(ChatColor.RED + "Gebe " + ChatColor.WHITE + "/rcconfirm" + ChatColor.RED + " ein um die Warnung zur Kenntnis zu nehmen!");
-        else
+        } else {
             player.sendMessage(ChatColor.GREEN + "Gebe " + ChatColor.WHITE + "/rcconfirm" + ChatColor.RED + " ein um das Lob zur Kenntnis zu nehmen!");
+        }
         player.sendMessage(ChatColor.YELLOW + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
         try {
@@ -90,7 +93,7 @@ public class WarnManager {
     public void informPlayer(Player player) {
 
         Warning warning = getOpenWarning(player.getName());
-        if(warning != null) {
+        if (warning != null) {
             informPlayer(player, warning);
         }
     }
@@ -98,7 +101,7 @@ public class WarnManager {
     public void warningAccept(String player) {
         Database.getTable(PointsTable.class).setAccepted(player);
         RaidCraft.LOGGER.info("Warning accepted by player: " + player);
-        if(Bukkit.getPlayer(player) != null) {
+        if (Bukkit.getPlayer(player) != null) {
             Bukkit.getPlayer(player).sendMessage(ChatColor.YELLOW + "Warnung akzeptiert! Du kannst nun weiter spielen!");
         }
     }
