@@ -10,11 +10,15 @@ import java.util.UUID;
  */
 public class Ban {
 
+    @Deprecated
     private String player;
     @Getter
     private UUID playerId;
+    @Getter
     private int points;
+    @Getter
     private String date;
+    @Getter
     private String expiration;
     private boolean unbanned = false;
 
@@ -33,25 +37,12 @@ public class Ban {
         this.unbanned = unbanned;
     }
 
+    @Deprecated
     public String getPlayerName() {
 
         return player;
     }
 
-    public int getPoints() {
-
-        return points;
-    }
-
-    public String getDate() {
-
-        return date;
-    }
-
-    public String getExpiration() {
-
-        return expiration;
-    }
 
     public String getEmbellishedExpiration() {
         if (!isTemporary()) {
