@@ -6,6 +6,7 @@ import de.raidcraft.rcwarn.RCWarnPlugin;
 import de.raidcraft.rcwarn.util.Reason;
 import de.raidcraft.rcwarn.util.Warning;
 import de.raidcraft.util.DateUtil;
+import de.raidcraft.util.UUIDUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
@@ -13,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author Philip
@@ -68,9 +70,10 @@ public class PointsTable extends Table {
             }
 
             getConnection().prepareStatement(
-                    "INSERT INTO " + getTableName() + " (player, punisher, amount, reason, detail, date, world, x, y, z) " +
+                    "INSERT INTO " + getTableName() + " (player, player_id, punisher, amount, reason, detail, date, world, x, y, z) " +
                             "VALUES (" +
-                            "'" + warning.getPlayer() + "'" + "," +
+                            "'" + UUIDUtil.getNameFromUUID(warning.getPlayerId()) + "'" + "," +
+                            "'" + warning.getPlayerId() + "'" + "," +
                             "'" + warning.getPunisher() + "'" + "," +
                             "'" + warning.getReason().getPoints() + "'" + "," +
                             "'" + warning.getReason().getName() + "'" + "," +
@@ -87,12 +90,14 @@ public class PointsTable extends Table {
         }
     }
 
-    public int getAllPoints(String player) {
+    public int getAllPoints(UUID player) {
         int points = 0;
         checkPointsExpiration(player);
         try {
             ResultSet resultSet = getConnection().prepareStatement(
-                    "SELECT * FROM " + getTableName() + " WHERE player='" + player + "' AND ((expired='0' AND permanent='0') OR permanent='1')").executeQuery();
+                    "SELECT * FROM " + getTableName()
+                            + " WHERE player_id='" + player
+                            + "' AND ((expired='0' AND permanent='0') OR permanent='1')").executeQuery();
 
             while (resultSet.next()) {
                 points += resultSet.getInt("amount");
@@ -104,12 +109,12 @@ public class PointsTable extends Table {
         return points;
     }
 
-    public List<Warning> getAllWarnings(String player) {
+    public List<Warning> getAllWarnings(UUID player) {
         List<Warning> warnings = new ArrayList<>();
         Warning warning;
         try {
             ResultSet resultSet = getConnection().prepareStatement(
-                    "SELECT * FROM " + getTableName() + " WHERE player = '" + player + "'").executeQuery();
+                    "SELECT * FROM " + getTableName() + " WHERE player_id = '" + player + "'").executeQuery();
 
             while (resultSet.next()) {
                 warning = getWarningByResultSet(resultSet);
@@ -138,11 +143,12 @@ public class PointsTable extends Table {
         return warnings;
     }
 
-    public Warning getLastWarning(String player) {
+    public Warning getLastWarning(UUID player) {
         Warning warning;
         try {
             ResultSet resultSet = getConnection().prepareStatement(
-                    "SELECT * FROM " + getTableName() + " WHERE player = '" + player + "' ORDER BY id DESC").executeQuery();
+                    "SELECT * FROM " + getTableName()
+                            + " WHERE player_id = '" + player + "' ORDER BY id DESC").executeQuery();
 
             while (resultSet.next()) {
                 return getWarningByResultSet(resultSet);
@@ -153,7 +159,7 @@ public class PointsTable extends Table {
         return null;
     }
 
-    public void checkPointsExpiration(String player) {
+    public void checkPointsExpiration(UUID player) {
         List<Warning> warnings = getAllWarnings(player);
         for (Warning warning : warnings) {
             // warning expired
@@ -167,10 +173,11 @@ public class PointsTable extends Table {
         }
     }
 
-    public void setAccepted(String player) {
+    public void setAccepted(UUID player) {
         try {
             getConnection().prepareStatement(
-                    "UPDATE " + getTableName() + " SET accepted = '1' WHERE player = '" + player + "'").execute();
+                    "UPDATE " + getTableName() + " SET accepted = '1' WHERE player_id = '" + player
+                            + "'").execute();
             RaidCraft.getComponent(RCWarnPlugin.class).getWarnManager().setOpenWarnings(getOpenWarnings());
         } catch (SQLException e) {
             RaidCraft.getComponent(RCWarnPlugin.class).warning(e.getMessage());
@@ -180,16 +187,18 @@ public class PointsTable extends Table {
     public void setExpired(Warning warning) {
         try {
             getConnection().prepareStatement(
-                    "UPDATE " + getTableName() + " SET expired = '1' WHERE player = '" + warning.getPlayer() + "' AND date = '" + warning.getDate() + "'").execute();
+                    "UPDATE " + getTableName() + " SET expired = '1' WHERE player_id = '" +
+                            warning.getPlayerId() + "' AND date = '" + warning.getDate() + "'").execute();
         } catch (SQLException e) {
             RaidCraft.getComponent(RCWarnPlugin.class).warning(e.getMessage());
         }
     }
 
-    public void setPermanent(String player) {
+    public void setPermanent(UUID player) {
         try {
             getConnection().prepareStatement(
-                    "UPDATE " + getTableName() + " SET permanent='1' WHERE player = '" + player + "'").execute();
+                    "UPDATE " + getTableName() +
+                            " SET permanent='1' WHERE player_id = '" + player + "'").execute();
         } catch (SQLException e) {
             RaidCraft.getComponent(RCWarnPlugin.class).warning(e.getMessage());
         }
@@ -203,7 +212,7 @@ public class PointsTable extends Table {
             location = new Location(Bukkit.getWorld(resultSet.getString("world")), resultSet.getInt("x"), resultSet.getInt("y"), resultSet.getInt("z"));
         }
         Warning warning = new Warning(
-                resultSet.getString("player"),
+                UUID.fromString(resultSet.getString("player_id")),
                 resultSet.getString("punisher"),
                 reason,
                 resultSet.getString("date"),

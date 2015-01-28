@@ -15,6 +15,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import java.util.UUID;
+
 /**
  * @author Philip
  */
@@ -22,21 +24,25 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onAsynchPreLogin(AsyncPlayerPreLoginEvent event) {
+        UUID uuid = event.getUniqueId();
 
         RCWarnPlugin plugin = RaidCraft.getComponent(RCWarnPlugin.class);
-        Ban ban = RaidCraft.getTable(BansTable.class).getBan(event.getName());
+        Ban ban = RaidCraft.getTable(BansTable.class).getBan(uuid);
 
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(event.getName());
-        if(offlinePlayer != null && offlinePlayer.isBanned() && ban == null) {
-            plugin.getWarnManager().addWarning(event.getName(), "RCWarn", null, new Reason("Altban", 100, 0).setDetail("Der Spieler war bereits gebannt!"));
-            plugin.getBanManager().checkPlayer(event.getName());
+        if (offlinePlayer != null && offlinePlayer.isBanned() && ban == null) {
+            plugin.getWarnManager().addWarning(uuid,
+                    "RCWarn",
+                    null,
+                    new Reason("Altban", 100, 0).setDetail("Der Spieler war bereits gebannt!"));
+            plugin.getBanManager().checkPlayer(uuid);
             return;
         }
 
         // no or old ban
-        if(ban == null || ban.isExpired()) {
-            Database.getTable(BansTable.class).unban(event.getName());
-            plugin.getBanManager().checkPlayer(event.getName());
+        if (ban == null || ban.isExpired()) {
+            Database.getTable(BansTable.class).unban(uuid);
+            plugin.getBanManager().checkPlayer(uuid);
             return;
         }
         plugin.getBanManager().kickBannedPlayer(event, ban);
@@ -46,8 +52,8 @@ public class PlayerListener implements Listener {
     public void onInteract(PlayerInteractEvent event) {
 
         RCWarnPlugin plugin = RaidCraft.getComponent(RCWarnPlugin.class);
-        Warning warning = plugin.getWarnManager().getOpenWarning(event.getPlayer().getName());
-        if(warning == null) {
+        Warning warning = plugin.getWarnManager().getOpenWarning(event.getPlayer().getUniqueId());
+        if (warning == null) {
             return;
         }
 

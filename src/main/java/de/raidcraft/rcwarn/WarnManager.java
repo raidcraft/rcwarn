@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author Philip
@@ -23,21 +24,22 @@ import java.util.Map;
 public class WarnManager {
 
     private RCWarnPlugin plugin;
-    private Map<String, Warning> openWarnings = new HashMap<>();
+    private Map<UUID, Warning> openWarnings = new HashMap<>();
 
     public WarnManager(RCWarnPlugin plugin) {
 
         this.plugin = plugin;
     }
 
-    public Warning addWarning(String player, String punisher, Location location, Reason reason) {
+    public Warning addWarning(UUID player, String punisher, Location location, Reason reason) {
 
         Warning warning = new Warning(player, punisher, reason, DateUtil.getCurrentDateString(), location);
         Database.getTable(PointsTable.class).addPoints(warning);
         openWarnings.put(player, warning);
         plugin.getBanManager().checkPlayer(player);
         // send warning to all servers
-        plugin.getBungeeManager().sendMessage(Bukkit.getOnlinePlayers()[0], new PlayerGetWarningMessage(player, reason.getName()));
+        plugin.getBungeeManager().sendMessage(Bukkit.getOnlinePlayers()[0],
+                new PlayerGetWarningMessage(player, reason.getName()));
         //        RCWarn.INST.postThreads();
         if (Bukkit.getPlayer(player) != null) {
             informPlayer(Bukkit.getPlayer(player), warning);
@@ -49,15 +51,15 @@ public class WarnManager {
     public void setOpenWarnings(List<Warning> warnings) {
         openWarnings.clear();
         for (Warning warning : warnings) {
-            openWarnings.put(warning.getPlayer(), warning);
+            openWarnings.put(warning.getPlayerId(), warning);
         }
     }
 
-    public Warning getOpenWarning(String player) {
+    public Warning getOpenWarning(UUID player) {
         return openWarnings.get(player);
     }
 
-    public void removeOpenWarning(String player) {
+    public void removeOpenWarning(UUID player) {
         openWarnings.remove(player);
     }
 
@@ -66,7 +68,7 @@ public class WarnManager {
         if (warning.getReason().getDetail() != null && warning.getReason().getDetail().length() > 0) {
             detail = warning.getReason().getDetail();
         }
-        int points = Database.getTable(PointsTable.class).getAllPoints(player.getName());
+        int points = Database.getTable(PointsTable.class).getAllPoints(player.getUniqueId());
         player.sendMessage(ChatColor.YELLOW + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         if (warning.getReason().getPoints() > -1) {
             player.sendMessage(ChatColor.RED.toString() + ChatColor.ITALIC + "Du wurdest verwarnt!");
@@ -84,7 +86,7 @@ public class WarnManager {
         player.sendMessage(ChatColor.YELLOW + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
         try {
-            new QueuedCommand(player, this, "warningAccept", player.getName());
+            new QueuedCommand(player, this, "warningAccept", player.getUniqueId());
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -92,13 +94,14 @@ public class WarnManager {
 
     public void informPlayer(Player player) {
 
-        Warning warning = getOpenWarning(player.getName());
+        Warning warning = getOpenWarning(player.getUniqueId());
         if (warning != null) {
             informPlayer(player, warning);
         }
     }
 
-    public void warningAccept(String player) {
+    // called via reflection of QueuedCommand
+    public void warningAccept(UUID player) {
         Database.getTable(PointsTable.class).setAccepted(player);
         RaidCraft.LOGGER.info("Warning accepted by player: " + player);
         if (Bukkit.getPlayer(player) != null) {

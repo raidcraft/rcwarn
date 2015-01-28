@@ -11,9 +11,9 @@ public class Reason {
     private static List<Reason> reasons = new ArrayList<>();
 
     public static Reason getReason(String name) {
-        for(Reason reason : reasons) {
-            for(String alias : reason.getAliases()) {
-                if(alias.equalsIgnoreCase(name)) {
+        for (Reason reason : reasons) {
+            for (String alias : reason.getAliases()) {
+                if (alias.equalsIgnoreCase(name)) {
                     reason.setDetail("");
                     return reason;
                 }
@@ -24,7 +24,7 @@ public class Reason {
 
     public static List<String> getAllReasonNames() {
         List<String> reasonNames = new ArrayList<>();
-        for(Reason reason : reasons) {
+        for (Reason reason : reasons) {
             reasonNames.add(reason.getName());
         }
         return reasonNames;
