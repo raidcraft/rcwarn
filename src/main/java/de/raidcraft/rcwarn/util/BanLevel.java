@@ -27,10 +27,10 @@ public class BanLevel {
     }
 
     public String getExpirationFromNow() {
-        if(getDuration() <= 0) {
+        if (getDuration() <= 0) {
             return "";
         }
 
-        return DateUtil.getDateString(System.currentTimeMillis() + getDuration()*60*1000);
+        return DateUtil.getDateString(System.currentTimeMillis() + getDuration() * 60 * 1000);
     }
 }

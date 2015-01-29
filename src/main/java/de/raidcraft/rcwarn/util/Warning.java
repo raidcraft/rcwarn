@@ -1,32 +1,32 @@
 package de.raidcraft.rcwarn.util;
 
+import lombok.Getter;
 import org.bukkit.Location;
+
+import java.util.UUID;
 
 /**
  * @author Philip
  */
 public class Warning {
 
-    String player;
+    @Getter
+    UUID playerId;
     String punisher;
     Reason reason;
     String date;
     Location location;
     private boolean expired = false;
 
-    public Warning(String player, String punisher, Reason reason, String date, Location location) {
+    public Warning(UUID playerId, String punisher, Reason reason, String date, Location location) {
 
-        this.player = player;
+        this.playerId = playerId;
         this.punisher = punisher;
         this.reason = reason;
         this.date = date;
         this.location = location;
     }
 
-    public String getPlayer() {
-
-        return player;
-    }
 
     public String getPunisher() {
 
