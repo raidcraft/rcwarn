@@ -40,7 +40,7 @@ public class WarnCommand {
     public void rcwarn(CommandContext context, CommandSender sender) throws CommandException {
 
         if (context.argsLength() < 2) {
-            throw new CommandException("Zu wenig Argumente!");
+            throw new CommandException("Zu wenig Argumente! /warn <Spieler> <Grund> [Detail]");
         }
 
         //check player
