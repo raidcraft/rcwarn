@@ -29,7 +29,7 @@ public class BansTable extends Table {
                     "CREATE TABLE `" + getTableName() + "` (\n" +
                             "`id` INT NOT NULL AUTO_INCREMENT ,\n" +
                             "`player` VARCHAR( 32 ) NOT NULL ,\n" +
-                            "`player` VARCHAR( 40 ) NOT NULL ,\n" +
+                            "`player_id` VARCHAR( 40 ) NOT NULL ,\n" +
                             "`points` INT( 11 ) NOT NULL ,\n" +
                             "`date` VARCHAR( 64 ) NOT NULL ,\n" +
                             "`expiration` VARCHAR( 64 ) DEFAULT NULL ,\n" +
