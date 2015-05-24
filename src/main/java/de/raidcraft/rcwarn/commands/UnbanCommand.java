@@ -61,7 +61,7 @@ public class UnbanCommand {
             }
         }
 
-        OfflinePlayer playerData = CommandUtil.grabPlayer(playerName);
+        OfflinePlayer playerData = CommandUtil.grabOfflinePlayer(playerName);
         UUID playerId = playerData.getUniqueId();
         Ban ban = Database.getTable(BansTable.class).getBan(playerId);
         if (ban == null || ban.isExpired()) {
