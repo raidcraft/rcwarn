@@ -38,8 +38,8 @@ public class WarnManager {
         openWarnings.put(player, warning);
         plugin.getBanManager().checkPlayer(player);
         // send warning to all servers
-        if(Bukkit.getOnlinePlayers().length > 0) {
-            plugin.getBungeeManager().sendMessage(Bukkit.getOnlinePlayers()[0],
+        if(Bukkit.getOnlinePlayers().size() > 0) {
+            plugin.getBungeeManager().sendMessage(Bukkit.getOnlinePlayers().get(0),
                     new PlayerGetWarningMessage(player, reason.getName()));
             //        RCWarn.INST.postThreads();
             if (Bukkit.getPlayer(player) != null) {
