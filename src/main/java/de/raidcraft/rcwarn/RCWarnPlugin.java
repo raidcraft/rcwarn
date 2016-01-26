@@ -12,12 +12,12 @@ import de.raidcraft.rcwarn.commands.BansInfoCommand;
 import de.raidcraft.rcwarn.commands.UnbanCommand;
 import de.raidcraft.rcwarn.commands.WarnCommand;
 import de.raidcraft.rcwarn.commands.WarningsInfoCommand;
-import de.raidcraft.rcwarn.database.BanLevelsTable;
-import de.raidcraft.rcwarn.database.BansTable;
-import de.raidcraft.rcwarn.database.PointsTable;
-import de.raidcraft.rcwarn.database.ReasonsTable;
+import de.raidcraft.rcwarn.database.*;
 import de.raidcraft.rcwarn.listener.PlayerListener;
 import de.raidcraft.rcwarn.multiworld.PlayerGetWarningMessage;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Philip
@@ -47,8 +47,6 @@ public class RCWarnPlugin extends BasePlugin {
         registerEvents(new PlayerListener());
         registerTable(BansTable.class, new BansTable());
         registerTable(PointsTable.class, new PointsTable());
-        registerTable(ReasonsTable.class, new ReasonsTable());
-        registerTable(BanLevelsTable.class, new BanLevelsTable());
 
         bungeeManager = RaidCraft.getComponent(RCMultiWorldPlugin.class).getBungeeManager();
         banManager = new BanManager(this);
@@ -65,10 +63,21 @@ public class RCWarnPlugin extends BasePlugin {
     }
 
     @Override
+    public List<Class<?>> getDatabaseClasses() {
+        List<Class<?>> classes = new ArrayList<>();
+
+        classes.add(TReason.class);
+        classes.add(TBanLevels.class);
+        //classes.add(TPoints.class);
+
+        return classes;
+    }
+
+    @Override
     public void reload() {
         config.reload();
-        RaidCraft.getTable(ReasonsTable.class).addAllReasons();
-        RaidCraft.getTable(BanLevelsTable.class).setBanLevels();
+        TReason.addAllReasons();
+        TBanLevels.setBanLevels();
         warnManager.setOpenWarnings(Database.getTable(PointsTable.class).getOpenWarnings());
     }
 
