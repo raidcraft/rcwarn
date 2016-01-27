@@ -5,10 +5,9 @@ import com.sk89q.minecraft.util.commands.CommandContext;
 import com.sk89q.minecraft.util.commands.CommandException;
 import com.sk89q.minecraft.util.commands.CommandPermissions;
 import de.raidcraft.RaidCraft;
-import de.raidcraft.api.database.Database;
 import de.raidcraft.rcwarn.RCWarnPlugin;
-import de.raidcraft.rcwarn.database.BansTable;
-import de.raidcraft.rcwarn.database.PointsTable;
+import de.raidcraft.rcwarn.database.TBans;
+import de.raidcraft.rcwarn.database.TPoints;
 import de.raidcraft.rcwarn.util.Ban;
 import de.raidcraft.rcwarn.util.Reason;
 import de.raidcraft.rcwarn.util.Warning;
@@ -63,7 +62,7 @@ public class UnbanCommand {
 
         OfflinePlayer playerData = CommandUtil.grabOfflinePlayer(playerName);
         UUID playerId = playerData.getUniqueId();
-        Ban ban = Database.getTable(BansTable.class).getBan(playerId);
+        Ban ban = TBans.getBan(playerId);
         if (ban == null || ban.isExpired()) {
             throw new CommandException("Der Spieler '" + playerName + "' ist nicht gebannt!");
         }
@@ -73,15 +72,14 @@ public class UnbanCommand {
             if (sender instanceof Player) {
                 location = ((Player) sender).getLocation();
             }
-            int points = Database.getTable(PointsTable.class).getAllPoints(playerId);
+            int points = TPoints.getAllPoints(playerId);
             points -= RaidCraft.getComponent(RCWarnPlugin.class).getBanManager().getHighestBanLevel().getPoints() - 2;
-            Database.getTable(PointsTable.class)
-                    .addPoints(
-                            new Warning(playerId, sender.getName(),
-                                    new Reason("Unban", -points, 0), DateUtil.getCurrentDateString(), location));
-            Database.getTable(PointsTable.class).setAccepted(playerId);
+            TPoints.addPoints(
+                    new Warning(playerId, sender.getName(),
+                            new Reason("Unban", -points, 0), DateUtil.getCurrentDateString(), location));
+            TPoints.setAcceptedFlag(playerId);
         }
-        Database.getTable(BansTable.class).unban(playerId);
+        TBans.unban(playerId);
 
         sender.sendMessage(ChatColor.GREEN + "Du hast '" + ChatColor.YELLOW + playerName + ChatColor.GREEN + "' entbannt!");
         Bukkit.broadcastMessage(ChatColor.DARK_GREEN + playerName + " wurde entbannt!");

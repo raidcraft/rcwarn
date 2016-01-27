@@ -1,8 +1,7 @@
 package de.raidcraft.rcwarn;
 
-import de.raidcraft.api.database.Database;
-import de.raidcraft.rcwarn.database.BansTable;
-import de.raidcraft.rcwarn.database.PointsTable;
+import de.raidcraft.rcwarn.database.TBans;
+import de.raidcraft.rcwarn.database.TPoints;
 import de.raidcraft.rcwarn.util.Ban;
 import de.raidcraft.rcwarn.util.BanLevel;
 import de.raidcraft.rcwarn.util.Warning;
@@ -57,7 +56,7 @@ public class BanManager {
 
     public void checkPlayer(UUID playerId) {
 
-        int playerPoints = Database.getTable(PointsTable.class).getAllPoints(playerId);
+        int playerPoints = TPoints.getAllPoints(playerId);
         BanLevel nextBanLevel = null;
         // get highest reached ban level
         for (BanLevel banLevel : banLevels) {
@@ -77,8 +76,8 @@ public class BanManager {
         /*
          * get sure that ban level not reached before
          */
-        Ban lastBan = Database.getTable(BansTable.class).getLastBan(playerId);                        // get last ban
-        List<Warning> allWarnings = Database.getTable(PointsTable.class).getAllWarnings(playerId);    // get all warnings
+        Ban lastBan = TBans.getLastBan(playerId);                        // get last ban
+        List<Warning> allWarnings = TPoints.getAllWarnings(playerId);    // get all warnings
         // sort all not expired warnings
         SortedMap<Long, Warning> orderedWarnings = new TreeMap<>();
         for (Warning warning : allWarnings) {
@@ -106,9 +105,9 @@ public class BanManager {
         String expiration = nextBanLevel.getExpirationFromNow();
         String playerName = UUIDUtil.getNameFromUUID(playerId);
         Ban newBan = new Ban(playerName, playerId, playerPoints, DateUtil.getCurrentDateString(), expiration);
-        Database.getTable(PointsTable.class).setAccepted(playerId);
-        Database.getTable(PointsTable.class).setPermanent(playerId);
-        Database.getTable(BansTable.class).addBan(newBan);
+        TPoints.setAcceptedFlag(playerId);
+        TPoints.setPermanentFlag(playerId);
+        TBans.addBan(newBan);
         kickBannedPlayer(playerId, newBan);
         //        RCWarn.INST.postThreads();
         Bukkit.broadcastMessage(ChatColor.DARK_RED + playerName + " wurde gebannt (" + newBan.getEmbellishedExpiration() + ")!");

@@ -1,9 +1,8 @@
 package de.raidcraft.rcwarn.listener;
 
 import de.raidcraft.RaidCraft;
-import de.raidcraft.api.database.Database;
 import de.raidcraft.rcwarn.RCWarnPlugin;
-import de.raidcraft.rcwarn.database.BansTable;
+import de.raidcraft.rcwarn.database.TBans;
 import de.raidcraft.rcwarn.util.Ban;
 import de.raidcraft.rcwarn.util.Reason;
 import de.raidcraft.rcwarn.util.Warning;
@@ -27,7 +26,7 @@ public class PlayerListener implements Listener {
         UUID uuid = event.getUniqueId();
 
         RCWarnPlugin plugin = RaidCraft.getComponent(RCWarnPlugin.class);
-        Ban ban = RaidCraft.getTable(BansTable.class).getBan(uuid);
+        Ban ban = TBans.getBan(uuid);
 
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(event.getName());
         if (offlinePlayer != null && offlinePlayer.isBanned() && ban == null) {
@@ -41,7 +40,7 @@ public class PlayerListener implements Listener {
 
         // no or old ban
         if (ban == null || ban.isExpired()) {
-            Database.getTable(BansTable.class).unban(uuid);
+            TBans.unban(uuid);
             plugin.getBanManager().checkPlayer(uuid);
             return;
         }

@@ -4,9 +4,8 @@ import com.sk89q.minecraft.util.commands.Command;
 import com.sk89q.minecraft.util.commands.CommandContext;
 import com.sk89q.minecraft.util.commands.CommandException;
 import de.raidcraft.RaidCraft;
-import de.raidcraft.api.database.Database;
 import de.raidcraft.rcwarn.RCWarnPlugin;
-import de.raidcraft.rcwarn.database.PointsTable;
+import de.raidcraft.rcwarn.database.TPoints;
 import de.raidcraft.rcwarn.util.Warning;
 import de.raidcraft.util.CommandUtil;
 import de.raidcraft.util.DateUtil;
@@ -56,7 +55,7 @@ public class WarningsInfoCommand {
         }
         OfflinePlayer playerData = CommandUtil.grabPlayer(playerName);
         UUID playerId = playerData.getUniqueId();
-        int points = Database.getTable(PointsTable.class).getAllPoints(playerId);
+        int points = TPoints.getAllPoints(playerId);
 
         sender.sendMessage("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         sender.sendMessage(ChatColor.GREEN + "Die letzen Verwarnungen von " + playerName + ":");
@@ -64,7 +63,7 @@ public class WarningsInfoCommand {
 
         // get all warnings
         long currentTime = System.currentTimeMillis();
-        List<Warning> allWarnings = Database.getTable(PointsTable.class).getAllWarnings(playerId);
+        List<Warning> allWarnings = TPoints.getAllWarnings(playerId);
 
         if (allWarnings.size() == 0) {
             sender.sendMessage(ChatColor.GREEN + "Du hast noch keine Verwarnungen!");

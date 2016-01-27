@@ -2,8 +2,7 @@ package de.raidcraft.rcwarn;
 
 import de.raidcraft.RaidCraft;
 import de.raidcraft.api.commands.QueuedCommand;
-import de.raidcraft.api.database.Database;
-import de.raidcraft.rcwarn.database.PointsTable;
+import de.raidcraft.rcwarn.database.TPoints;
 import de.raidcraft.rcwarn.multiworld.PlayerGetWarningMessage;
 import de.raidcraft.rcwarn.util.Reason;
 import de.raidcraft.rcwarn.util.Warning;
@@ -34,7 +33,7 @@ public class WarnManager {
     public Warning addWarning(UUID player, String punisher, Location location, Reason reason) {
 
         Warning warning = new Warning(player, punisher, reason, DateUtil.getCurrentDateString(), location);
-        Database.getTable(PointsTable.class).addPoints(warning);
+        TPoints.addPoints(warning);
         openWarnings.put(player, warning);
         plugin.getBanManager().checkPlayer(player);
         // send warning to all servers
@@ -73,7 +72,7 @@ public class WarnManager {
         if (warning.getReason().getDetail() != null && warning.getReason().getDetail().length() > 0) {
             detail = warning.getReason().getDetail();
         }
-        int points = Database.getTable(PointsTable.class).getAllPoints(player.getUniqueId());
+        int points = TPoints.getAllPoints(player.getUniqueId());
         player.sendMessage(ChatColor.YELLOW + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         if (warning.getReason().getPoints() > -1) {
             player.sendMessage(ChatColor.RED.toString() + ChatColor.ITALIC + "Du wurdest verwarnt!");
@@ -107,7 +106,7 @@ public class WarnManager {
 
     // called via reflection of QueuedCommand
     public void warningAccept(UUID player) {
-        Database.getTable(PointsTable.class).setAccepted(player);
+        TPoints.setAcceptedFlag(player);
         RaidCraft.LOGGER.info("Warning accepted by player: " + player);
         if (Bukkit.getPlayer(player) != null) {
             Bukkit.getPlayer(player).sendMessage(ChatColor.YELLOW + "Warnung akzeptiert! Du kannst nun weiter spielen!");

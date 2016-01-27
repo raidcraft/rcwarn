@@ -45,8 +45,6 @@ public class RCWarnPlugin extends BasePlugin {
         registerCommands(BansInfoCommand.class);
 
         registerEvents(new PlayerListener());
-        registerTable(BansTable.class, new BansTable());
-        registerTable(PointsTable.class, new PointsTable());
 
         bungeeManager = RaidCraft.getComponent(RCMultiWorldPlugin.class).getBungeeManager();
         banManager = new BanManager(this);
@@ -68,7 +66,8 @@ public class RCWarnPlugin extends BasePlugin {
 
         classes.add(TReason.class);
         classes.add(TBanLevels.class);
-        //classes.add(TPoints.class);
+        classes.add(TPoints.class);
+        classes.add(TBans.class);
 
         return classes;
     }
@@ -78,7 +77,7 @@ public class RCWarnPlugin extends BasePlugin {
         config.reload();
         TReason.addAllReasons();
         TBanLevels.setBanLevels();
-        warnManager.setOpenWarnings(Database.getTable(PointsTable.class).getOpenWarnings());
+        warnManager.setOpenWarnings(TPoints.getOpenWarnings());
     }
 
     public static class LocalConfiguration extends ConfigurationBase<RCWarnPlugin> {

@@ -4,10 +4,9 @@ import com.sk89q.minecraft.util.commands.Command;
 import com.sk89q.minecraft.util.commands.CommandContext;
 import com.sk89q.minecraft.util.commands.CommandException;
 import de.raidcraft.RaidCraft;
-import de.raidcraft.api.database.Database;
 import de.raidcraft.rcwarn.RCWarnPlugin;
-import de.raidcraft.rcwarn.database.BansTable;
-import de.raidcraft.rcwarn.database.PointsTable;
+import de.raidcraft.rcwarn.database.TBans;
+import de.raidcraft.rcwarn.database.TPoints;
 import de.raidcraft.rcwarn.util.Ban;
 import de.raidcraft.rcwarn.util.Warning;
 import de.raidcraft.util.CommandUtil;
@@ -59,7 +58,7 @@ public class BansInfoCommand {
 
         OfflinePlayer playerData = CommandUtil.grabPlayer(playerName);
         UUID playerId = playerData.getUniqueId();
-        int points = Database.getTable(PointsTable.class).getAllPoints(playerId);
+        int points = TPoints.getAllPoints(playerId);
 
         sender.sendMessage("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         sender.sendMessage(ChatColor.GREEN + "Die letzen Bans von " + playerName + ":");
@@ -67,7 +66,7 @@ public class BansInfoCommand {
 
         // get all warnings
         long cuttentTime = System.currentTimeMillis();
-        List<Ban> allBans = Database.getTable(BansTable.class).getBans(playerId);
+        List<Ban> allBans = TBans.getBans(playerId);
 
         if (allBans.size() == 0) {
             sender.sendMessage(ChatColor.GREEN + "Du hast noch keine Bans!");
