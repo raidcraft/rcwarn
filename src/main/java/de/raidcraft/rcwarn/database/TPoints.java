@@ -87,10 +87,10 @@ public class TPoints {
         List<TPoints> tPointsList = plugin.getDatabase().find(TPoints.class).where()
                 .eq("player_id", player)
                 .or(
-                        com.avaje.ebean.Expr.and(
-                                com.avaje.ebean.Expr.eq("expired", false),
-                                com.avaje.ebean.Expr.eq("permanent", false)),
-                        com.avaje.ebean.Expr.eq("permanent", true)
+                        plugin.getDatabase().getExpressionFactory().and(
+                                plugin.getDatabase().getExpressionFactory().eq("expired", false),
+                                plugin.getDatabase().getExpressionFactory().eq("permanent", false)),
+                        plugin.getDatabase().getExpressionFactory().eq("permanent", true)
                 ).findList();
         if(tPointsList == null) return points;
 
