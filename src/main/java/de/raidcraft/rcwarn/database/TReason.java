@@ -39,7 +39,7 @@ public class TReason {
         if(tReasons == null)
             for(TReason tReason : tReasons) {
                 Reason reason = new Reason(tReason.getName(), tReason.getPoints(), tReason.getDuration());
-                String[] aliases = tReason.getAliases().split(",");
+                String[] aliases = tReason.getAliases().replace(" ", "").split(",");
                 if (aliases != null) {
                     for (String alias : aliases) {
                         reason.addAlias(alias);
