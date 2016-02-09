@@ -36,7 +36,7 @@ public class TReason {
         Reason.cleanReasons();
 
         List<TReason> tReasons = plugin.getDatabase().find(TReason.class).findList();
-        if(tReasons == null)
+        if(tReasons != null)
             for(TReason tReason : tReasons) {
                 Reason reason = new Reason(tReason.getName(), tReason.getPoints(), tReason.getDuration());
                 String[] aliases = tReason.getAliases().replace(" ", "").split(",");
